@@ -13,7 +13,7 @@
 - 2. PLATO  
 | ATRIBUTO | TIPO | OBLIGATORIO | DERIVADA |  
 | --- | --- | --- | --- |  
-| ListaAlergenos | List<Enumerado> | Si | No |  
+| ListaAlergenos | List<Enumerado> | Si | Si |  
 | Alimentos | Mapa<Alimento: Cantidad (gramos)> | Si | No |  
 | Nombre | String | Si | No |  
 | Calorias | Double | Si | Si |
@@ -35,7 +35,12 @@
  * LISTA DE TODOS LOS ALERGENOS
  * DAR ALGO (POR NOMBRE) + QUERY (FILTRAR QUE QUIERES Y NO VER)
  * SACAR PLATOS O ALIMENTOS POR TEMPORADA / C.A. / TIPO DE DIETA (QUERY PARA INDICAR C.A, TEMPORADA, O TIPO DE DIETA)
- 
  2. POST
+ * DE CADA MODELO
  3. PUT
+ * Alimentos de un plato
+ * Descripción de Dieta y sus platos
  4. DELETE
+ *  Eliminar un alimento que no estén en un plato
+ *  Eliminar un plato que no esté en una dieta
+ *  Eliminar una dieta
