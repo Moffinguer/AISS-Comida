@@ -1,18 +1,20 @@
 # MODELOS
 
-- 1. ALIMENTO  
+- ALIMENTO  
+
 | ATRIBUTO | TIPO | OBLIGATORIO | DERIVADA |  
-| --- | --- | --- | --- |  
+| :---: | :---: | :---: | :---: |  
 | Nombre | String | Si | No |  
-| Calorías | Double | Si | No |  
-| Categoría | Enumerado (Carne, Pescado, etc) | Si | No |  
+| CalorÃ­as | Double | Si | No |  
+| CategorÃ­a | Enumerado (Carne, Pescado, etc) | Si | No |  
 | Tipo | Enumerado (Grasa, Proteina, HdC, SalMin, ViT) | Si | No |  
 | Alergeno | Enumerado (Lechita) | Si | No |  
 | Temporada | Enumerado<Estaciones> | No | No |  
 
-- 2. PLATO  
+- PLATO  
+ 
 | ATRIBUTO | TIPO | OBLIGATORIO | DERIVADA |  
-| --- | --- | --- | --- |  
+| :---: | :---: | :---: | :---: |  
 | ListaAlergenos | List<Enumerado> | Si | Si |  
 | Alimentos | Mapa<Alimento: Cantidad (gramos)> | Si | No |  
 | Nombre | String | Si | No |  
@@ -21,26 +23,27 @@
 | CAOrigen | String | Si | No |
 | Temporada | Enumerado<Estaciones> | No | No | 
 
-- 3. DIETA  
-| ATRIBUTO | TIPO | OBLIGATORIO | DERIVADA |
-| --- | --- | --- | --- |
-| Nombre | String | Si | No |
-| Platos | List<Plato> | Si | No |
-| Descripción | String | No | No |
-| TipoDieta | Enumerado<(Veganos, Vegetarianos, Diabetico)> | No | No |
+- DIETA  
+ 
+| ATRIBUTO | TIPO | OBLIGATORIO | DERIVADA |  
+| :---: | :---: | :---: | :---: |   
+| Nombre | String | Si | No |  
+| Platos | List<Plato> | Si | No |  
+| DescripciÃ³n | String | No | No |  
+| TipoDieta | Enumerado<(Veganos, Vegetarianos, Diabetico)> | No | No |  
 
 # ENDPOINTS
  1. GET
- * CONSULTAR DE TODOS LOS MODELOS (PAGINADO {En alimentos} Y ORDENACION {Nombre y calorias, ASC y DESC en platos})
- * LISTA DE TODOS LOS ALERGENOS
- * DAR ALGO (POR NOMBRE) + QUERY (FILTRAR QUE QUIERES Y NO VER)
- * SACAR PLATOS O ALIMENTOS POR TEMPORADA / C.A. / TIPO DE DIETA (QUERY PARA INDICAR C.A, TEMPORADA, O TIPO DE DIETA)
+   * CONSULTAR DE TODOS LOS MODELOS (PAGINADO {En alimentos} Y ORDENACION {Nombre y calorias, ASC y DESC en platos})
+   * LISTA DE TODOS LOS ALERGENOS
+   * DAR ALGO (POR NOMBRE) + QUERY (FILTRAR QUE QUIERES Y NO VER)
+   * SACAR PLATOS O ALIMENTOS POR TEMPORADA / C.A. / TIPO DE DIETA (QUERY PARA INDICAR C.A, TEMPORADA, O TIPO DE DIETA)
  2. POST
- * DE CADA MODELO
+   * DE CADA MODELO
  3. PUT
- * Alimentos de un plato
- * Descripción de Dieta y sus platos
+   * Alimentos de un plato
+   * DescripciÃ³n de Dieta y sus platos
  4. DELETE
- *  Eliminar un alimento que no estén en un plato
- *  Eliminar un plato que no esté en una dieta
- *  Eliminar una dieta
+   *  Eliminar un alimento que no estÃ©n en un plato
+   *  Eliminar un plato que no estÃ© en una dieta
+   *  Eliminar una dieta
