@@ -1,0 +1,8 @@
+# MODELOS
+
+- [ ] ALIMENTO
+- [ ] PLATO
+- [ ] COSA_DE_TEMPORADA
+# ENDPOINTS
+
+
