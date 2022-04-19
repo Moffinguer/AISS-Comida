@@ -1,6 +1,6 @@
 # MODELOS
 
-- 1. ALIMENTO
+- 1. ALIMENTO  
 | ATRIBUTO | TIPO | OBLIGATORIO | DERIVADA |
 | --- | --- | --- | --- |
 | Nombre | String | Si | No |
@@ -10,7 +10,7 @@
 | Alergeno | Enumerado (Lechita) | Si | No |
 | Temporada | Enumerado<Estaciones> | No | No | 
 
-- 2. PLATO
+- 2. PLATO  
 | ATRIBUTO | TIPO | OBLIGATORIO | DERIVADA |
 | --- | --- | --- | --- |
 | ListaAlergenos | List<Enumerado> | Si | No |
@@ -21,7 +21,7 @@
 | CAOrigen | String | Si | No |
 | Temporada | Enumerado<Estaciones> | No | No | 
 
-- 3. DIETA
+- 3. DIETA  
 | ATRIBUTO | TIPO | OBLIGATORIO | DERIVADA |
 | --- | --- | --- | --- |
 | Nombre | String | Si | No |
@@ -34,6 +34,7 @@
  * CONSULTAR DE TODOS LOS MODELOS
  * LISTA DE TODOS LOS ALERGENOS
  * DAR ALGO (POR NOMBRE) + QUERY (FILTRAR QUE QUIERES Y NO VER)
+ * SACAR PLATOS O ALIMENTOS POR TEMPORADA / C.A. / TIPO DE DIETA
  - POST
  - PUT
  - DELETE
