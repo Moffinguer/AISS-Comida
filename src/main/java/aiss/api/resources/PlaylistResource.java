@@ -70,7 +70,7 @@ public class PlaylistResource {
 		if(name  != null) {
 			playlists = playlists.stream().filter(pl -> pl.getName().equals(name)).collect(Collectors.toList());
 		}
-		if(order != null) {
+		if(order   != null) {
 			if(order.equals("name")) {
 				playlists = playlists.stream().sorted(Comparator.comparing(Playlist::getName)).collect(Collectors.toList());
 			}else if(order.equals("-name")){
