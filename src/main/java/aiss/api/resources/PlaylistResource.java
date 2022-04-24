@@ -67,7 +67,7 @@ public class PlaylistResource {
 				playlists = playlists.stream().filter(pl -> pl.getSongs().size() != 0).collect(Collectors.toList());
 			}
 		}
-		if(name != null) {
+		if(name  != null) {
 			playlists = playlists.stream().filter(pl -> pl.getName().equals(name)).collect(Collectors.toList());
 		}
 		if(order != null) {
