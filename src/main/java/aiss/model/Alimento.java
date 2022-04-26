@@ -2,17 +2,11 @@ package aiss.model;
 
 public class Alimento {
 	
-	//ENUM
-	enum Categorias {}
-	enum TipoAlimento{}
-	enum Alergeno{}
-	enum Temporada{}
-	
 	//ATRIBUTOS
 	private String id;
 	private String nombre;
 	private Double calorias;
-	private Categorias categoria;
+	private Categoria categoria;
 	private TipoAlimento tipo;
 	private Alergeno alergeno; //opcional?
 	private Temporada temporada; //opcional
@@ -53,11 +47,11 @@ public class Alimento {
 		this.calorias = calorias;
 	}
 
-	public Categorias getCategoria() {
+	public Categoria getCategoria() {
 		return categoria;
 	}
 
-	public void setCategoria(Categorias categoria) {
+	public void setCategoria(Categoria categoria) {
 		this.categoria = categoria;
 	}
 
