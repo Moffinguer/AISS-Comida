@@ -69,7 +69,9 @@ public class Dieta {
 		if (this.platos == null) {
 			this.platos = new ArrayList<Plato>();
 		}
-		platos.add(plato);
+		if(!platos.contains(plato)) {
+			platos.add(plato);
+		}
 	}
 			
 	public void deletePlato (String id) {

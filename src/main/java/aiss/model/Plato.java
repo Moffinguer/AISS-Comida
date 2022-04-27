@@ -1,7 +1,8 @@
 package aiss.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 public class Plato {
@@ -9,7 +10,7 @@ public class Plato {
 		//ATRIBUTOS
 		private String id;
 		private String nombre;
-		private List<Alimento> alimentos;
+		private Map<Alimento, Double> alimentos;
 		private Set<Alergeno> listaAlergenos; //derivada
 		private Double calorias; //derivada
 		private String provinciaOrigen; //opcional
@@ -28,13 +29,13 @@ public class Plato {
 			this.nombre = nombre;
 		}
 		
-		public Plato (String id, String nombre, List<Alimento> alimentos, String provinciaOrigen,
+		public Plato (String id, String nombre, Map<Alimento, Double> alimentos, String provinciaOrigen,
 				String CAOrigen, Temporada temporada) {
 			this.id = id;
 			this.nombre = nombre;
 			this.alimentos = alimentos;
-			this.listaAlergenos = this.alimentos.stream().map(a->a.getAlergeno()).collect(Collectors.toSet());
-			this.calorias = this.alimentos.stream().mapToDouble(a->a.getCalorias()).sum();
+			this.listaAlergenos = this.alimentos.entrySet().stream().map(a->a.getKey().getAlergeno()).collect(Collectors.toSet());
+			this.calorias = this.alimentos.entrySet().stream().mapToDouble(a->a.getKey().getCalorias()*a.getValue()).sum();
 			this.provinciaOrigen = provinciaOrigen;
 			this.CAOrigen = CAOrigen;
 			this.temporada = temporada;
@@ -56,11 +57,11 @@ public class Plato {
 			this.nombre = nombre;
 		}
 
-		public List<Alimento> getAlimentos() {
+		public Map<Alimento, Double> getAlimentos() {
 			return alimentos;
 		}
 
-		public void setAlimentos(List<Alimento> alimentos) {
+		public void setAlimentos(Map<Alimento, Double> alimentos) {
 			this.alimentos = alimentos;
 		}
 
@@ -69,7 +70,7 @@ public class Plato {
 		}
 
 		public void setListaAlergenos() {
-			this.listaAlergenos = this.alimentos.stream().map(a->a.getAlergeno()).collect(Collectors.toSet());
+			this.listaAlergenos = this.alimentos.entrySet().stream().map(a->a.getKey().getAlergeno()).collect(Collectors.toSet());
 		}
 
 		public Double getCalorias() {
@@ -77,7 +78,7 @@ public class Plato {
 		}
 
 		public void setCalorias() {
-			this.calorias = this.alimentos.stream().mapToDouble(a->a.getCalorias()).sum();
+			this.calorias = this.alimentos.entrySet().stream().mapToDouble(a->a.getKey().getCalorias()*a.getValue()).sum();
 		}
 
 		public String getProvinciaOrigen() {
@@ -105,17 +106,17 @@ public class Plato {
 		}	
 		
 		//OTROS METODOS
-		public void addAlimento (Alimento alimento) {
+		public void addAlimento (Alimento alimento, Double gramos) {
 			if (this.alimentos == null) {
-				this.alimentos = new ArrayList<Alimento>();
+				this.alimentos = new HashMap<Alimento, Double>();
 			}
-			alimentos.add(alimento);
+			alimentos.put(alimento, gramos);
 		}
 		
 		public void deleteAlimento (String id) {
-			for (int i = 0; i < this.alimentos.size(); i++) {
-				if (this.alimentos.get(i).getId() == id.trim()) {
-					this.alimentos.remove(i);
+			for (Entry<Alimento, Double> entry : this.alimentos.entrySet()) {
+				if (entry.getKey().getId() == id.trim()) {
+					this.alimentos.remove(entry.getKey());
 					break;
 				}
 			}
@@ -127,13 +128,24 @@ public class Plato {
 		
 		public Alimento getAlimento(String id) {
 			Alimento alimento = null;
-			for (int i = 0; i < this.alimentos.size(); i++) {
-				if (this.alimentos.get(i).getId() == id.trim()) {
-					alimento = this.alimentos.get(i);
+			for (Entry<Alimento, Double> entry : this.alimentos.entrySet()) {
+				if (entry.getKey().getId() == id.trim()) {
+					alimento = entry.getKey();
 					break;
 				}
 			}
 			return alimento;
+		}
+		
+		public Double getCantidadAlimento(String id) {
+			Double cantidad = 0.;
+			for (Entry<Alimento, Double> entry : this.alimentos.entrySet()) {
+				if (entry.getKey().getId() == id.trim()) {
+					cantidad = entry.getValue();
+					break;
+				}
+			}
+			return cantidad;
 		}
 		
 }
