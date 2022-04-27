@@ -1,6 +1,7 @@
 package aiss.api.resources;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -24,6 +25,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.jboss.resteasy.spi.BadRequestException;
 import org.jboss.resteasy.spi.NotFoundException;
 
+import aiss.model.Alergeno;
 import aiss.model.Plato;
 import aiss.model.repository.DietaRepository;
 import aiss.model.repository.MapDietaRepository;
@@ -91,7 +93,11 @@ public class PlatoResource {
 			return res;	
 		}
 	}
-	
+	@GET
+	@Consumes("application/json")
+	public Collection<Alergeno> getListOfAler(){
+		return Arrays.asList(Alergeno.values());
+	}
 	@PUT
 	@Consumes("application/json")
 	public Response updateDish(Plato nuevoPlato) {
