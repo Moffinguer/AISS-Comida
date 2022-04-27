@@ -4,10 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import aiss.model.Alimento.Alergeno;
-import aiss.model.Alimento.Temporada;
-
 public class Plato {
 		
 		//ATRIBUTOS
