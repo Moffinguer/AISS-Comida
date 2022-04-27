@@ -60,17 +60,8 @@ public class PlatoResource {
 		List<Comparator> options = new LinkedList<>();
 		/*
 		 * Para facilitar una busqueda por dos campos simultaneos, se guardará por cada una de las QUERY
-		 * un comparador, teniendo el campo `nombre` preferencia. 
+		 * un comparador, teniendo el campo `calorias` preferencia. 
 		 */
-		if(orderName != null) {
-			if(orderName.equals("ASC")) {
-				options.add(Comparator.comparing(Plato::getNombre));
-			}else if(orderName.equals("DESC")){
-				options.add(Comparator.comparing(Plato::getNombre).reversed());
-			}else{
-				throw new BadRequestException("Query \'nombre\', solo admite los valores \'ASC\' o \'DESC\'");
-			}	
-		}
 		if(orderCalories != null) {
 			if(orderCalories.equals("ASC")) {
 				options.add(Comparator.comparing(Plato::getCalorias));
@@ -79,6 +70,15 @@ public class PlatoResource {
 			}else{
 				throw new BadRequestException("Query \'calorias\', solo admite los valores \'ASC\' o \'DESC\'");
 			}
+		}
+		if(orderName != null) {
+			if(orderName.equals("ASC")) {
+				options.add(Comparator.comparing(Plato::getNombre));
+			}else if(orderName.equals("DESC")){
+				options.add(Comparator.comparing(Plato::getNombre).reversed());
+			}else{
+				throw new BadRequestException("Query \'nombre\', solo admite los valores \'ASC\' o \'DESC\'");
+			}	
 		}
 		/*
 		 * Para poder filtrarlo por cada uno, como hay 3 posibilidades (que se filtre por los 2 campos, por 1, o por ninguno)
