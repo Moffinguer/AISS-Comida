@@ -60,13 +60,13 @@ public class AlimentoResource {
 			try {
 				if(offset==null) {
 					alimentos = alimentos.stream().collect(Collectors.toList())
-							.subList(0, limit+1);
+							.subList(0, limit);
 				} else if (limit==null) {
 					alimentos = alimentos.stream().collect(Collectors.toList())
-							.subList(offset+1, alimentos.size());
+							.subList(offset, alimentos.size());
 				} else {
 					alimentos = alimentos.stream().collect(Collectors.toList())
-							.subList(offset+1, offset+limit+1);
+							.subList(offset, offset+limit);
 				}
 			} catch (Exception e) {
 				throw new BadRequestException("Error en el limite o en el offset");
