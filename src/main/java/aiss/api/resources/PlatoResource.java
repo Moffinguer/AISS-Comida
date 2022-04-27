@@ -52,37 +52,35 @@ public class PlatoResource {
 	@SuppressWarnings("finally")
 	@GET
 	@Produces("application/json")
-	public Collection<Plato> getAll(@QueryParam("nombre") String orderName,
-			@QueryParam("calorias") String orderCalories){
-		orderName = orderName.toUpperCase();
-		orderCalories = orderCalories.toUpperCase();
-		List<Plato> res = (List<Plato>) repository.getAllPlatos();
+	public Collection<Plato> getAll(@QueryParam("sortBy") String sort){
 		List<Comparator> options = new LinkedList<>();
-		/*
-		 * Para facilitar una busqueda por dos campos simultaneos, se guardará por cada una de las QUERY
-		 * un comparador, teniendo el campo `calorias` preferencia. 
-		 */
-		if(orderCalories != null) {
-			if(orderCalories.equals("ASC")) {
-				options.add(Comparator.comparing(Plato::getCalorias));
-			}else if(orderCalories.equals("DESC")){
-				options.add(Comparator.comparing(Plato::getCalorias).reversed());
-			}else{
-				throw new BadRequestException("Query \'calorias\', solo admite los valores \'ASC\' o \'DESC\'");
+		for(String param: Arrays.asList(sort.split(","))) {
+			String parameter = param.substring(1);
+			if(!parameter.equalsIgnoreCase("nombre") && !parameter.equalsIgnoreCase("calorias")) {
+				throw new BadRequestException("Query \'" + parameter + "\', solo admite los valores \'nombre\' o \'calorias\'");
 			}
-		}
-		if(orderName != null) {
-			if(orderName.equals("ASC")) {
-				options.add(Comparator.comparing(Plato::getNombre));
-			}else if(orderName.equals("DESC")){
-				options.add(Comparator.comparing(Plato::getNombre).reversed());
-			}else{
-				throw new BadRequestException("Query \'nombre\', solo admite los valores \'ASC\' o \'DESC\'");
-			}	
+			String ordering = "" + param.charAt(0);
+			if(!ordering.equals("+") && !ordering.equals("-")) {
+				throw new BadRequestException("Solo se admiten los simbolos \'+\' y \'-\'");
+			}
+			if(parameter.equalsIgnoreCase("nombre")) {
+				if(ordering.equals("+")) {
+					options.add(Comparator.comparing(Plato::getNombre));
+				}else {
+					options.add(Comparator.comparing(Plato::getNombre).reversed());
+				}
+			}else {
+				if(ordering.equals("+")) {
+					options.add(Comparator.comparing(Plato::getCalorias));
+				}else {
+					options.add(Comparator.comparing(Plato::getCalorias).reversed());
+				}
+			}
 		}
 		/*
 		 * Para poder filtrarlo por cada uno, como hay 3 posibilidades (que se filtre por los 2 campos, por 1, o por ninguno)
 		 */
+		Collection<Plato> res = repository.getAllPlatos();
 		try {
 			res = (List<Plato>) res.stream().sorted(options.get(0).thenComparing(options.get(1))).collect(Collectors.toList());
 		}catch(IndexOutOfBoundsException iobe){
