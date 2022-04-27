@@ -2,6 +2,9 @@ package aiss.api.resources;
 
 import java.net.URI;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
@@ -20,13 +23,12 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.jboss.resteasy.spi.BadRequestException;
 import org.jboss.resteasy.spi.NotFoundException;
 
-import aiss.model.Alimento;
-import aiss.model.TipoAlimento;
+import aiss.model.Plato;
 import aiss.model.repository.DietaRepository;
 import aiss.model.repository.MapDietaRepository;
-import aiss.model.repository.MapPlaylistRepository;
 
-@Path("/alimentos")
+
+@Path("/platos")
 public class PlatoResource {
 	
 	private static PlatoResource _instance=null;
@@ -44,67 +46,41 @@ public class PlatoResource {
 		return _instance;
 	}
 	
+	@SuppressWarnings("finally")
 	@GET
 	@Produces("application/json")
-	public Collection<Alimento> getAll(@QueryParam("limit") Integer limit,
-			@QueryParam("offset") Integer offset){
-		
-		Collection<Alimento> alimentos= this.repository.getAllAlimentos();
-		
-		//Para la paginacion
-		if( limit!=null || offset!=null ) {
-			try {
-				if(offset==null) {
-					alimentos = alimentos.stream().collect(Collectors.toList())
-							.subList(0, limit+1);
-				} else if (limit==null) {
-					alimentos = alimentos.stream().collect(Collectors.toList())
-							.subList(offset+1, alimentos.size());
-				} else {
-					alimentos = alimentos.stream().collect(Collectors.toList())
-							.subList(offset+1, offset+limit+1);
-				}
-			} catch (Exception e) {
-				throw new BadRequestException("Error en el limite o en el offset");
-				
+	public Collection<Plato> getAll(@QueryParam("nombre") String orderName,
+			@QueryParam("calorias") String orderCalories){
+		orderName = orderName.toUpperCase();
+		orderCalories = orderCalories.toUpperCase();
+		List<Plato> res = (List<Plato>) repository.getAllPlatos();
+		List<Comparator> options = new LinkedList<>();
+		if(orderName != null) {
+			if(orderName.equals("ASC")) {
+				options.add(Comparator.comparing(Plato::getNombre));
+			}else if(orderName.equals("DESC")){
+				options.add(Comparator.comparing(Plato::getNombre).reversed());
+			}else{
+				throw new BadRequestException("Query \'nombre\', solo admite los valores \'ASC\' o \'DESC\'");
+			}	
+		}
+		if(orderCalories != null) {
+			if(orderCalories.equals("ASC")) {
+				options.add(Comparator.comparing(Plato::getCalorias));
+			}else if(orderCalories.equals("DESC")){
+				options.add(Comparator.comparing(Plato::getCalorias).reversed());
+			}else{
+				throw new BadRequestException("Query \'calorias\', solo admite los valores \'ASC\' o \'DESC\'");
 			}
 		}
-		
-		return alimentos;
-	}
-	
-	@GET
-	@Path("/{id}")
-	@Produces("application/json")
-	public Alimento getAlimento(@PathParam("id") String alimentoId)
-	{
-		Alimento alimento = repository.getAlimento(alimentoId);
-		if(alimento == null) throw new NotFoundException("el alimento con ID: " + alimentoId + " no existe");
-		return alimento;
-	}
-	
-	@GET
-	@Path("/tipos")
-	@Produces("application/json")
-	public Collection<TipoAlimento> getTipoAlimento(){
-		return repository.getAllAlimentos().stream()
-				.map(a -> a.getTipo()).collect(Collectors.toSet());
-	}
-	
-	@POST
-	@Consumes("application/json")
-	@Produces("application/json")
-	public Response addAlimento(@Context UriInfo uriInfo, Alimento alimento) {
-		if(alimento.getNombre() == null || alimento.getNombre().equals("")) throw new BadRequestException("El nombre del alimento no puede ser nulo");
-		if(alimento.getCalorias() == null) throw new BadRequestException("Las calorías del alimento no puede ser nulo");
-		if(alimento.getTipo() == null ) throw new BadRequestException("El alimento debe ser al menos de un tipo");
-		if(alimento.getAlergeno() == null) throw new BadRequestException("El alimento debe tener al menos un alergeno");
-		if(alimento.getCategoria() == null) throw new BadRequestException("El alimento deber pertenecer al menos a una categoría");
-		repository.addAlimento(alimento);
-		UriBuilder ub = uriInfo.getAbsolutePathBuilder().path(this.getClass(), "get");
-		URI uri = ub.build(alimento.getId());
-		ResponseBuilder respb = Response.created(uri);
-		respb.entity(alimento);
-		return respb.build();
+		try {
+			res = (List<Plato>) res.stream().sorted(options.get(0).thenComparing(options.get(1))).collect(Collectors.toList());
+		}catch(IndexOutOfBoundsException iobe){
+			try {
+				res = (List<Plato>) res.stream().sorted(options.get(0)).collect(Collectors.toList());
+			}catch(IndexOutOfBoundsException iobe2) {}
+		}finally {
+			return res;	
+		}
 	}
 }
