@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -55,6 +56,10 @@ public class PlatoResource {
 		orderCalories = orderCalories.toUpperCase();
 		List<Plato> res = (List<Plato>) repository.getAllPlatos();
 		List<Comparator> options = new LinkedList<>();
+		/*
+		 * Para facilitar una busqueda por dos campos simultaneos, se guardará por cada una de las QUERY
+		 * un comparador, teniendo el campo `nombre` preferencia. 
+		 */
 		if(orderName != null) {
 			if(orderName.equals("ASC")) {
 				options.add(Comparator.comparing(Plato::getNombre));
@@ -73,6 +78,9 @@ public class PlatoResource {
 				throw new BadRequestException("Query \'calorias\', solo admite los valores \'ASC\' o \'DESC\'");
 			}
 		}
+		/*
+		 * Para poder filtrarlo por cada uno, como hay 3 posibilidades (que se filtre por los 2 campos, por 1, o por ninguno)
+		 */
 		try {
 			res = (List<Plato>) res.stream().sorted(options.get(0).thenComparing(options.get(1))).collect(Collectors.toList());
 		}catch(IndexOutOfBoundsException iobe){
@@ -82,5 +90,38 @@ public class PlatoResource {
 		}finally {
 			return res;	
 		}
+	}
+	
+	@PUT
+	@Consumes("application/json")
+	public Response updateDish(Plato nuevoPlato) {
+		if(nuevoPlato == null) {
+			throw new BadRequestException("No se ha enviado ninguna modificación");
+		}
+		if(nuevoPlato.getId() == null || nuevoPlato.getId().isEmpty()) {
+			throw new BadRequestException("No podemos identificar el plato, no existe un ID");
+		}
+		Plato actualPlato = repository.getPlato(nuevoPlato.getId());
+		/*
+		 * Compruebo que ningún campo esté siendo modificado, salvo el de los alimentos
+		 * En caso de que hubiera alguno no definido, en la petición, lanzaría un error
+		 */
+		try {
+			if(!nuevoPlato.getCalorias().equals(actualPlato.getCalorias())) 
+				throw new BadRequestException("Solo puede modificarse el listado de alimentos");
+			if(!nuevoPlato.getListaAlergenos().equals(actualPlato.getListaAlergenos())) 
+				throw new BadRequestException("Solo puede modificarse el listado de alimentos");
+			if(!nuevoPlato.getNombre().equals(actualPlato.getNombre())) 
+				throw new BadRequestException("Solo puede modificarse el listado de alimentos");
+			if(!nuevoPlato.getCAOrigen().equals(actualPlato.getCAOrigen())) 
+				throw new BadRequestException("Solo puede modificarse el listado de alimentos");
+			if(!nuevoPlato.getTemporada().equals(actualPlato.getTemporada())) 
+				throw new BadRequestException("No podemos identificar el plato, no existe un ID");
+		}catch(NullPointerException npe) {
+			throw new BadRequestException("Solo puede modificarse el listado de alimentos");
+		}
+		if(nuevoPlato.getAlimentos() != null) 
+			actualPlato.setAlimentos(nuevoPlato.getAlimentos());
+		return Response.noContent().build();
 	}
 }
