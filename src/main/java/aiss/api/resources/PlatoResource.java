@@ -112,20 +112,16 @@ public class PlatoResource {
 		 * Compruebo que ningún campo esté siendo modificado, salvo el de los alimentos
 		 * En caso de que hubiera alguno no definido, en la petición, lanzaría un error
 		 */
-		try {
-			if(!nuevoPlato.getCalorias().equals(actualPlato.getCalorias())) 
+			if(nuevoPlato.getCalorias() != null) 
 				throw new BadRequestException("Solo puede modificarse el listado de alimentos");
-			if(!nuevoPlato.getListaAlergenos().equals(actualPlato.getListaAlergenos())) 
+			if(nuevoPlato.getListaAlergenos() != null) 
 				throw new BadRequestException("Solo puede modificarse el listado de alimentos");
-			if(!nuevoPlato.getNombre().equals(actualPlato.getNombre())) 
+			if(nuevoPlato.getNombre() != null) 
 				throw new BadRequestException("Solo puede modificarse el listado de alimentos");
-			if(!nuevoPlato.getCAOrigen().equals(actualPlato.getCAOrigen())) 
+			if(nuevoPlato.getCAOrigen() != null) 
 				throw new BadRequestException("Solo puede modificarse el listado de alimentos");
-			if(!nuevoPlato.getTemporada().equals(actualPlato.getTemporada())) 
+			if(nuevoPlato.getTemporada() != null) 
 				throw new BadRequestException("No podemos identificar el plato, no existe un ID");
-		}catch(NullPointerException npe) {
-			throw new BadRequestException("Solo puede modificarse el listado de alimentos");
-		}
 		if(nuevoPlato.getAlimentos() != null) 
 			actualPlato.setAlimentos(nuevoPlato.getAlimentos());
 		return Response.noContent().build();
