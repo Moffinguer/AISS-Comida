@@ -5,9 +5,6 @@ import java.util.List;
 
 public class Dieta {
 	
-	//ENUM
-	enum TipoDieta {}
-	
 	//ATRIBUTOS
 	private String id;
 	private String nombre;

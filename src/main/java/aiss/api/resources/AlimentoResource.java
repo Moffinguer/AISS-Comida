@@ -1,6 +1,7 @@
 package aiss.api.resources;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -20,7 +21,10 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.jboss.resteasy.spi.BadRequestException;
 import org.jboss.resteasy.spi.NotFoundException;
 
+import aiss.model.Alergeno;
 import aiss.model.Alimento;
+import aiss.model.Categoria;
+import aiss.model.Temporada;
 import aiss.model.TipoAlimento;
 import aiss.model.repository.DietaRepository;
 import aiss.model.repository.MapDietaRepository;
@@ -87,8 +91,7 @@ public class AlimentoResource {
 	@Path("/tipos")
 	@Produces("application/json")
 	public Collection<TipoAlimento> getTipoAlimento(){
-		return repository.getAllAlimentos().stream()
-				.map(a -> a.getTipo()).collect(Collectors.toSet());
+		return Arrays.asList(TipoAlimento.values());
 	}
 	
 	@POST
@@ -100,6 +103,22 @@ public class AlimentoResource {
 		if(alimento.getTipo() == null ) throw new BadRequestException("El alimento debe ser al menos de un tipo");
 		if(alimento.getAlergeno() == null) throw new BadRequestException("El alimento debe tener al menos un alergeno");
 		if(alimento.getCategoria() == null) throw new BadRequestException("El alimento deber pertenecer al menos a una categoría");
+		Collection<TipoAlimento> tiposAlimentos=Arrays.asList(TipoAlimento.values());
+		Collection<Alergeno> tiposAlergenos=Arrays.asList(Alergeno.values());
+		Collection<Categoria> tiposCategorias=Arrays.asList(Categoria.values());
+		Collection<Temporada> tiposTemporadas=Arrays.asList(Temporada.values());
+		if(!tiposAlimentos.contains(alimento.getTipo())) {
+			throw new BadRequestException("Tipo de alimento no válido");
+		}
+		if(!tiposAlergenos.contains(alimento.getAlergeno())) {
+			throw new BadRequestException("Alergeno no válido");
+		}
+		if(!tiposCategorias.contains(alimento.getCategoria())) {
+			throw new BadRequestException("Categoría no válida");
+		}
+		if(!tiposTemporadas.contains(alimento.getTemporada())) {
+			throw new BadRequestException("Temporada no válida");
+		}
 		repository.addAlimento(alimento);
 		UriBuilder ub = uriInfo.getAbsolutePathBuilder().path(this.getClass(), "get");
 		URI uri = ub.build(alimento.getId());
