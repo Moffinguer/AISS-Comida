@@ -21,6 +21,8 @@ public interface DietaRepository {
 		public Plato getPlato(String platoId);
 		public void updatePlato(Plato p);
 		public void deletePlato(String platoId);
+		public void addAlimento(String platoId, String alimentoId);
+		public void deleteAlimento(String platoId, String alimentoId);
 		
 		//Dietas
 		public void addDieta(Dieta d);
@@ -28,4 +30,6 @@ public interface DietaRepository {
 		public Dieta getDieta(String dietaId);
 		public void updateDieta(Dieta d);
 		public void deleteDieta(String dietaId);
+		public void addPlato(String dietaId, String platoId);
+		public void deletePlato(String dietaId, String platoId);
 }

@@ -119,5 +119,30 @@ public class MapDietaRepository implements DietaRepository{
 		// TODO Auto-generated method stub
 		
 	}
+	
+	//para añadir alimentos a platos y platos a dietas
+	@Override
+	public void addAlimento(String platoId, String alimentoId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deleteAlimento(String platoId, String alimentoId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addPlato(String dietaId, String platoId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deletePlato(String dietaId, String platoId) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
