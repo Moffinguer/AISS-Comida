@@ -1,6 +1,7 @@
 package aiss.api.resources;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -23,6 +25,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.jboss.resteasy.spi.BadRequestException;
 import org.jboss.resteasy.spi.NotFoundException;
 
+import aiss.model.Alergeno;
 import aiss.model.Plato;
 import aiss.model.repository.DietaRepository;
 import aiss.model.repository.MapDietaRepository;
@@ -49,30 +52,35 @@ public class PlatoResource {
 	@SuppressWarnings("finally")
 	@GET
 	@Produces("application/json")
-	public Collection<Plato> getAll(@QueryParam("nombre") String orderName,
-			@QueryParam("calorias") String orderCalories){
-		orderName = orderName.toUpperCase();
-		orderCalories = orderCalories.toUpperCase();
-		List<Plato> res = (List<Plato>) repository.getAllPlatos();
+	public Collection<Plato> getAll(@QueryParam("sortBy") String sort){
 		List<Comparator> options = new LinkedList<>();
-		if(orderName != null) {
-			if(orderName.equals("ASC")) {
-				options.add(Comparator.comparing(Plato::getNombre));
-			}else if(orderName.equals("DESC")){
-				options.add(Comparator.comparing(Plato::getNombre).reversed());
-			}else{
-				throw new BadRequestException("Query \'nombre\', solo admite los valores \'ASC\' o \'DESC\'");
-			}	
-		}
-		if(orderCalories != null) {
-			if(orderCalories.equals("ASC")) {
-				options.add(Comparator.comparing(Plato::getCalorias));
-			}else if(orderCalories.equals("DESC")){
-				options.add(Comparator.comparing(Plato::getCalorias).reversed());
-			}else{
-				throw new BadRequestException("Query \'calorias\', solo admite los valores \'ASC\' o \'DESC\'");
+		for(String param: Arrays.asList(sort.split(","))) {
+			String parameter = param.substring(1);
+			if(!parameter.equalsIgnoreCase("nombre") && !parameter.equalsIgnoreCase("calorias")) {
+				throw new BadRequestException("Query \'" + parameter + "\', solo admite los valores \'nombre\' o \'calorias\'");
+			}
+			String ordering = "" + param.charAt(0);
+			if(!ordering.equals("+") && !ordering.equals("-")) {
+				throw new BadRequestException("Solo se admiten los simbolos \'+\' y \'-\'");
+			}
+			if(parameter.equalsIgnoreCase("nombre")) {
+				if(ordering.equals("+")) {
+					options.add(Comparator.comparing(Plato::getNombre));
+				}else {
+					options.add(Comparator.comparing(Plato::getNombre).reversed());
+				}
+			}else {
+				if(ordering.equals("+")) {
+					options.add(Comparator.comparing(Plato::getCalorias));
+				}else {
+					options.add(Comparator.comparing(Plato::getCalorias).reversed());
+				}
 			}
 		}
+		/*
+		 * Para poder filtrarlo por cada uno, como hay 3 posibilidades (que se filtre por los 2 campos, por 1, o por ninguno)
+		 */
+		Collection<Plato> res = repository.getAllPlatos();
 		try {
 			res = (List<Plato>) res.stream().sorted(options.get(0).thenComparing(options.get(1))).collect(Collectors.toList());
 		}catch(IndexOutOfBoundsException iobe){
@@ -82,5 +90,38 @@ public class PlatoResource {
 		}finally {
 			return res;	
 		}
+	}
+	@GET
+	@Consumes("application/json")
+	public Collection<Alergeno> getListOfAler(){
+		return Arrays.asList(Alergeno.values());
+	}
+	@PUT
+	@Consumes("application/json")
+	public Response updateDish(Plato nuevoPlato) {
+		if(nuevoPlato == null) {
+			throw new BadRequestException("No se ha enviado ninguna modificación");
+		}
+		if(nuevoPlato.getId() == null || nuevoPlato.getId().isEmpty()) {
+			throw new BadRequestException("No podemos identificar el plato, no existe un ID");
+		}
+		Plato actualPlato = repository.getPlato(nuevoPlato.getId());
+		/*
+		 * Compruebo que ningún campo esté siendo modificado, salvo el de los alimentos
+		 * En caso de que hubiera alguno no definido, en la petición, lanzaría un error
+		 */
+			if(nuevoPlato.getCalorias() != null) 
+				throw new BadRequestException("Solo puede modificarse el listado de alimentos");
+			if(nuevoPlato.getListaAlergenos() != null) 
+				throw new BadRequestException("Solo puede modificarse el listado de alimentos");
+			if(nuevoPlato.getNombre() != null) 
+				throw new BadRequestException("Solo puede modificarse el listado de alimentos");
+			if(nuevoPlato.getCAOrigen() != null) 
+				throw new BadRequestException("Solo puede modificarse el listado de alimentos");
+			if(nuevoPlato.getTemporada() != null) 
+				throw new BadRequestException("No podemos identificar el plato, no existe un ID");
+		if(nuevoPlato.getAlimentos() != null) 
+			actualPlato.setAlimentos(nuevoPlato.getAlimentos());
+		return Response.noContent().build();
 	}
 }
