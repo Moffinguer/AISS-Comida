@@ -93,12 +93,6 @@ public class PlatoResource {
 		}
 	}
 	@GET
-	@Consumes("application/json")
-	public Collection<Alergeno> getListOfAler(){
-		return Arrays.asList(Alergeno.values());
-	}
-	
-	@GET
 	@Produces("application/json")
 	public Collection <Plato> getPlatoPorCaracter(@QueryParam("s") String caracteres)
 	{
