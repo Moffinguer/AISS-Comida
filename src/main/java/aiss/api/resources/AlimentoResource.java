@@ -25,7 +25,6 @@ import org.jboss.resteasy.spi.NotFoundException;
 import aiss.model.Alergeno;
 import aiss.model.Alimento;
 import aiss.model.Categoria;
-import aiss.model.Dieta;
 import aiss.model.Plato;
 import aiss.model.Temporada;
 import aiss.model.TipoAlimento;
@@ -114,7 +113,7 @@ public class AlimentoResource {
 	}
 	@GET
 	@Path("/alergenos")
-	@Consumes("application/json")
+	@Produces("application/json")
 	public Collection<Alergeno> getListOfAler(){
 		return Arrays.asList(Alergeno.values());
 	}
