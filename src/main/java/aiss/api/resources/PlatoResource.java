@@ -54,6 +54,7 @@ public class PlatoResource {
 	@Produces("application/json")
 	public Collection<Plato> getAll(@QueryParam("sortBy") String sort){
 		List<Comparator> options = new LinkedList<>();
+		if(!sort.isEmpty()){
 		for(String param: Arrays.asList(sort.split(","))) {
 			String parameter = param.substring(1);
 			if(!parameter.equalsIgnoreCase("nombre") && !parameter.equalsIgnoreCase("calorias")) {
@@ -76,6 +77,7 @@ public class PlatoResource {
 					options.add(Comparator.comparing(Plato::getCalorias).reversed());
 				}
 			}
+		}
 		}
 		/*
 		 * Para poder filtrarlo por cada uno, como hay 3 posibilidades (que se filtre por los 2 campos, por 1, o por ninguno)

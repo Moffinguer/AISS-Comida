@@ -10,7 +10,7 @@ public class Dieta {
 	private String nombre;
 	private String descripcion; //opcional
 	private List<Plato> platos;
-	private TipoDieta tipo; //opcional
+	private TipoDieta tipo;
 	
 	//CONSTRUCTORES
 	public Dieta () {}

@@ -39,7 +39,7 @@ public class DietaResource {
 	private static DietaResource _instance=null;
 	DietaRepository repository;
 	
-	private DietaResource() {
+	public DietaResource() {
 		repository=MapDietaRepository.getInstance();
 
 	}
@@ -157,6 +157,9 @@ public class DietaResource {
 					throw new BadRequestException("Ha introducido un plato que no existe: " + plato.getId() );
 				}
 				platos.add(platoTemp);
+			}
+			if(platos.isEmpty()) {
+				throw new BadRequestException("No ha introducido ningún plato");
 			}
 			actualDieta.setPlatos(platos);
 			}
