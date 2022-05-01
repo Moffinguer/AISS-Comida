@@ -56,7 +56,7 @@ public class MapDietaRepository implements DietaRepository{
 
 	@Override
 	public void deleteAlimento(String alimentoId) {
-		// TODO Auto-generated method stub
+		alimentoMap.remove(alimentoId);
 		
 	}
 
@@ -69,18 +69,18 @@ public class MapDietaRepository implements DietaRepository{
 	@Override
 	public Collection<Plato> getAllPlatos() {
 		// TODO Auto-generated method stub
-		return null;
+		return this.platoMap.values();
 	}
 
 	@Override
 	public Plato getPlato(String platoId) {
 		// TODO Auto-generated method stub
-		return null;
+		return this.platoMap.get(platoId);
 	}
 
 	@Override
 	public void updatePlato(Plato p) {
-		// TODO Auto-generated method stub
+		this.platoMap.put(p.getId(), p);
 		
 	}
 
@@ -110,7 +110,7 @@ public class MapDietaRepository implements DietaRepository{
 
 	@Override
 	public void updateDieta(Dieta d) {
-		// TODO Auto-generated method stub
+		dietaMap.put(d.getId(), d);
 		
 	}
 

@@ -80,8 +80,27 @@ public class DietaResource {
 		if(dieta == null) throw new NotFoundException("la dieta con ID: " + dietaId + " no existe");
 		return dieta;
 	}
-	
-	
+	@GET
+	@Consumes("application/json")
+	@Path("/{id}")
+	public Collection<Plato> getPlatos(@QueryParam("fields") String fields, @PathParam("id") String id){
+		Collection<Plato> platos = null;
+		try {
+			platos = repository.getDieta(id).getPlatos();
+			for(String field :  fields.split(",")) {
+				if(!field.equalsIgnoreCase("tipo") && !field.equalsIgnoreCase("platos")){
+					throw new NotFoundException("Solo puede obtener los platos y los tipo");
+				}
+				if(field.equalsIgnoreCase("tipo")) {
+					
+				}
+			}
+		}catch(NullPointerException npe) {
+			throw new NotFoundException("No existe una dieta con ID: " + id);
+		}finally {
+			return platos;
+		}
+	}
 	@POST
 	@Consumes("application/json")
 	@Produces("application/json")

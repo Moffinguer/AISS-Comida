@@ -127,6 +127,8 @@ public class PlatoResource {
 			throw new BadRequestException("No podemos identificar el plato, no existe un ID");
 		}
 		Plato actualPlato = repository.getPlato(nuevoPlato.getId());
+		if(actualPlato == null)
+			throw new BadRequestException("No podemos identificar el plato, no existe un ID como " + nuevoPlato.getId());
 		/*
 		 * Compruebo que ningún campo esté siendo modificado, salvo el de los alimentos
 		 * En caso de que hubiera alguno no definido, en la petición, lanzaría un error
@@ -143,6 +145,7 @@ public class PlatoResource {
 				throw new BadRequestException("No podemos identificar el plato, no existe un ID");
 		if(nuevoPlato.getAlimentos() != null) 
 			actualPlato.setAlimentos(nuevoPlato.getAlimentos());
+		repository.updatePlato(actualPlato);
 		return Response.noContent().build();
 	}
 }
