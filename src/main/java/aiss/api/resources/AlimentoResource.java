@@ -31,7 +31,6 @@ import aiss.model.Temporada;
 import aiss.model.TipoAlimento;
 import aiss.model.repository.DietaRepository;
 import aiss.model.repository.MapDietaRepository;
-import aiss.model.repository.MapPlaylistRepository;
 
 @Path("/alimentos")
 public class AlimentoResource {
