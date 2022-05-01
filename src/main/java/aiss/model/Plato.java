@@ -1,6 +1,8 @@
 package aiss.model;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -10,7 +12,7 @@ public class Plato {
 		//ATRIBUTOS
 		private String id;
 		private String nombre;
-		private Map<Alimento, Double> alimentos;
+		private List<Ingrediente> alimentos;
 		private Set<Alergeno> listaAlergenos; //derivada
 		private Double calorias; //derivada
 		private String provinciaOrigen; //opcional
@@ -29,13 +31,13 @@ public class Plato {
 			this.nombre = nombre;
 		}
 		
-		public Plato (String id, String nombre, Map<Alimento, Double> alimentos, String provinciaOrigen,
+		public Plato (String id, String nombre, List<Ingrediente> alimentos, String provinciaOrigen,
 				String CAOrigen, Temporada temporada) {
 			this.id = id;
 			this.nombre = nombre;
 			this.alimentos = alimentos;
-			this.listaAlergenos = this.alimentos.entrySet().stream().map(a->a.getKey().getAlergeno()).collect(Collectors.toSet());
-			this.calorias = this.alimentos.entrySet().stream().mapToDouble(a->a.getKey().getCalorias()*a.getValue()).sum();
+			this.listaAlergenos = this.alimentos.stream().map(alimento -> alimento.getAlimento().getAlergeno()).collect(Collectors.toSet());
+			this.calorias = this.alimentos.stream().mapToDouble(alimento -> alimento.getAlimento().getCalorias()).sum();
 			this.provinciaOrigen = provinciaOrigen;
 			this.CAOrigen = CAOrigen;
 			this.temporada = temporada;
@@ -57,12 +59,14 @@ public class Plato {
 			this.nombre = nombre;
 		}
 
-		public Map<Alimento, Double> getAlimentos() {
+		public List<Ingrediente> getAlimentos() {
 			return alimentos;
 		}
 
-		public void setAlimentos(Map<Alimento, Double> alimentos) {
+		public void setAlimentos(List<Ingrediente> alimentos) {
 			this.alimentos = alimentos;
+			setListaAlergenos();
+			setCalorias();
 		}
 
 		public Set<Alergeno> getListaAlergenos() {
@@ -70,7 +74,8 @@ public class Plato {
 		}
 
 		public void setListaAlergenos() {
-			this.listaAlergenos = this.alimentos.entrySet().stream().map(a->a.getKey().getAlergeno()).collect(Collectors.toSet());
+			this.listaAlergenos = this.alimentos.stream().map(alimento -> alimento.getAlimento().getAlergeno()).collect(Collectors.toSet());
+			
 		}
 
 		public Double getCalorias() {
@@ -78,7 +83,7 @@ public class Plato {
 		}
 
 		public void setCalorias() {
-			this.calorias = this.alimentos.entrySet().stream().mapToDouble(a->a.getKey().getCalorias()*a.getValue()).sum();
+			this.calorias = this.alimentos.stream().mapToDouble(alimento -> alimento.getAlimento().getCalorias()).sum();
 		}
 
 		public String getProvinciaOrigen() {
@@ -108,11 +113,14 @@ public class Plato {
 		//OTROS METODOS
 		public void addAlimento (Alimento alimento, Double gramos) {
 			if (this.alimentos == null) {
-				this.alimentos = new HashMap<Alimento, Double>();
+				this.alimentos = new LinkedList<Ingrediente>();
 			}
-			alimentos.put(alimento, gramos);
+			alimentos.add(new Ingrediente(alimento, gramos));
 		}
-		
+		public void addAlimentos(List<Ingrediente> ingredientes) {
+			if(this.alimentos == null) this.alimentos = new LinkedList<Ingrediente>();
+			alimentos.addAll(ingredientes);
+		}
 		public void deleteAlimento (String id) {
 			for (Entry<Alimento, Double> entry : this.alimentos.entrySet()) {
 				if (entry.getKey().getId() == id.trim()) {
@@ -120,9 +128,16 @@ public class Plato {
 					break;
 				}
 			}
+//			String sameId = id.trim();
+//			for(int i = this.alimentos.size() - 1; i > -1 ; i--){
+//				if(alimentos.get(i).getAlimento().getId().equals(sameId)) {
+//					this.alimentos.remove(i);
+//					break;
+//				}
+//			}
 		}
 		
-		public void deleteAlimento (Alimento alimento) {
+		public void deleteAlimento (Ingrediente alimento) {
 			this.alimentos.remove(alimento);
 		}
 		
@@ -134,6 +149,12 @@ public class Plato {
 					break;
 				}
 			}
+//			String sameId = id.trim();
+//			for(int i = this.alimentos.size() - 1; i > -1 ; i--){
+//				if(alimentos.get(i).getAlimento().getId().equals(sameId)) {
+//					return this.alimentos.get(i);
+//				}
+//			}
 			return alimento;
 		}
 		
@@ -145,6 +166,12 @@ public class Plato {
 					break;
 				}
 			}
+//			String sameId = id.trim();
+//			for(int i = this.alimentos.size() - 1; i > -1 ; i--){
+//				if(alimentos.get(i).getAlimento().getId().equals(sameId)) {
+//					return this.alimentos.get(i).getCantidad();
+//				}
+//			}
 			return cantidad;
 		}
 		
