@@ -32,7 +32,7 @@ public class MapDietaRepository implements DietaRepository{
 
 	@Override
 	public void addAlimento(Alimento a) {
-		// TODO Auto-generated method stub
+		alimentoMap.put(a.getId(), a);
 		
 	}
 

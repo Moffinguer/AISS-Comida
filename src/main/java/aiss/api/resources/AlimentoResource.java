@@ -39,7 +39,7 @@ public class AlimentoResource {
 	private static AlimentoResource _instance=null;
 	DietaRepository repository;
 	
-	private AlimentoResource() {
+	public AlimentoResource() {
 		repository=MapDietaRepository.getInstance();
 
 	}

@@ -83,7 +83,7 @@ public class DietaResource {
 	@GET
 	@Consumes("application/json")
 	@Path("/{id}")
-	public Dieta getPlatos(@QueryParam("fields") String fields, @PathParam("id") String id){
+	public Dieta selectDietaFields(@QueryParam("fields") String fields, @PathParam("id") String id){
 		Dieta dieta = null;
 		Dieta resDieta = null;
 		try {

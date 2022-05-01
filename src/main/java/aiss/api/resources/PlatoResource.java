@@ -38,7 +38,7 @@ public class PlatoResource {
 	private static PlatoResource _instance=null;
 	DietaRepository repository;
 	
-	private PlatoResource() {
+	public PlatoResource() {
 		repository=MapDietaRepository.getInstance();
 
 	}
@@ -50,7 +50,6 @@ public class PlatoResource {
 		return _instance;
 	}
 	
-	@SuppressWarnings("finally")
 	@GET
 	@Produces("application/json")
 	public Collection<Plato> getAll(@QueryParam("sortBy") String sort){
