@@ -122,19 +122,13 @@ public class Plato {
 			alimentos.addAll(ingredientes);
 		}
 		public void deleteAlimento (String id) {
-			for (Entry<Alimento, Double> entry : this.alimentos.entrySet()) {
-				if (entry.getKey().getId() == id.trim()) {
-					this.alimentos.remove(entry.getKey());
+			String sameId = id.trim();
+			for(int i = this.alimentos.size() - 1; i > -1 ; i--){
+				if(alimentos.get(i).getAlimento().getId().equals(sameId)) {
+					this.alimentos.remove(i);
 					break;
 				}
 			}
-//			String sameId = id.trim();
-//			for(int i = this.alimentos.size() - 1; i > -1 ; i--){
-//				if(alimentos.get(i).getAlimento().getId().equals(sameId)) {
-//					this.alimentos.remove(i);
-//					break;
-//				}
-//			}
 		}
 		
 		public void deleteAlimento (Ingrediente alimento) {
@@ -143,35 +137,23 @@ public class Plato {
 		
 		public Alimento getAlimento(String id) {
 			Alimento alimento = null;
-			for (Entry<Alimento, Double> entry : this.alimentos.entrySet()) {
-				if (entry.getKey().getId() == id.trim()) {
-					alimento = entry.getKey();
-					break;
+			String sameId = id.trim();
+			for(int i = this.alimentos.size() - 1; i > -1 ; i--){
+				if(alimentos.get(i).getAlimento().getId().equals(sameId)) {
+					return this.getAlimentos().get(i).getAlimento();
 				}
 			}
-//			String sameId = id.trim();
-//			for(int i = this.alimentos.size() - 1; i > -1 ; i--){
-//				if(alimentos.get(i).getAlimento().getId().equals(sameId)) {
-//					return this.alimentos.get(i);
-//				}
-//			}
 			return alimento;
 		}
 		
 		public Double getCantidadAlimento(String id) {
 			Double cantidad = 0.;
-			for (Entry<Alimento, Double> entry : this.alimentos.entrySet()) {
-				if (entry.getKey().getId() == id.trim()) {
-					cantidad = entry.getValue();
-					break;
+			String sameId = id.trim();
+			for(int i = this.alimentos.size() - 1; i > -1 ; i--){
+				if(alimentos.get(i).getAlimento().getId().equals(sameId)) {
+					return this.alimentos.get(i).getCantidad();
 				}
 			}
-//			String sameId = id.trim();
-//			for(int i = this.alimentos.size() - 1; i > -1 ; i--){
-//				if(alimentos.get(i).getAlimento().getId().equals(sameId)) {
-//					return this.alimentos.get(i).getCantidad();
-//				}
-//			}
 			return cantidad;
 		}
 		
