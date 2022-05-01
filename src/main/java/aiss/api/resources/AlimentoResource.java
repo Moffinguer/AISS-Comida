@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -24,6 +25,7 @@ import org.jboss.resteasy.spi.NotFoundException;
 import aiss.model.Alergeno;
 import aiss.model.Alimento;
 import aiss.model.Categoria;
+import aiss.model.Dieta;
 import aiss.model.Temporada;
 import aiss.model.TipoAlimento;
 import aiss.model.repository.DietaRepository;
@@ -86,6 +88,7 @@ public class AlimentoResource {
 		if(alimento == null) throw new NotFoundException("el alimento con ID: " + alimentoId + " no existe");
 		return alimento;
 	}
+
 	
 	@GET
 	@Path("/tipos")
@@ -125,5 +128,17 @@ public class AlimentoResource {
 		ResponseBuilder respb = Response.created(uri);
 		respb.entity(alimento);
 		return respb.build();
+	}
+	
+	@DELETE
+	@Path("/{id}")
+	public Response removeAlimento(@PathParam("id") String id) {
+		Alimento alimento=repository.getAlimento(id);
+		if (alimento == null)
+			throw new NotFoundException("El alimento con ID: " + id + " no existe");
+		else
+			repository.deleteAlimento(id);
+		
+		return Response.noContent().build();
 	}
 }
