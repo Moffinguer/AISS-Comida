@@ -26,6 +26,7 @@ import org.jboss.resteasy.spi.BadRequestException;
 import org.jboss.resteasy.spi.NotFoundException;
 
 import aiss.model.Alergeno;
+import aiss.model.Alimento;
 import aiss.model.Plato;
 import aiss.model.repository.DietaRepository;
 import aiss.model.repository.MapDietaRepository;
@@ -96,6 +97,26 @@ public class PlatoResource {
 	public Collection<Alergeno> getListOfAler(){
 		return Arrays.asList(Alergeno.values());
 	}
+	
+	@GET
+	@Produces("application/json")
+	public Collection <Plato> getPlatoPorCaracter(@QueryParam("s") String caracteres)
+	{
+		Collection<Plato> platos = repository.getAllPlatos();
+	/*Devuelve los platos que empiezan(+), terminan(-) o contienen un caracter especificado*/
+		if (caracteres.charAt(0)== '+' ) {
+			platos = platos.stream().filter(x->x.getNombre().startsWith(caracteres.substring(1, caracteres.length()))).collect(Collectors.toList());
+		}
+		else if (caracteres.charAt(0)== '-' ) {
+			platos = platos.stream().filter(x->x.getNombre().endsWith(caracteres.substring(1, caracteres.length()))).collect(Collectors.toList());
+		}
+		else {
+			platos = platos.stream().filter(x->x.getNombre().contains(caracteres.substring(1, caracteres.length()))).collect(Collectors.toList());
+		}
+		return platos;
+		
+	}
+	
 	@PUT
 	@Consumes("application/json")
 	public Response updateDish(Plato nuevoPlato) {
