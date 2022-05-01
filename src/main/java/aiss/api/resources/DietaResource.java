@@ -3,12 +3,15 @@ package aiss.api.resources;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -101,6 +104,46 @@ public class DietaResource {
 		resp.entity(dieta);
 		return resp.build();
 	}
+	
+	@PUT 
+	@Consumes("aplication/json")
+	public Response updateDiet(Dieta nuevaDieta) {
+		if(nuevaDieta == null) {
+			throw new BadRequestException("No se ha enviado ninguna modificación");
+		}
+		if(nuevaDieta.getId() == null || nuevaDieta.getId().isEmpty()) {
+			throw new BadRequestException("No podemos identificar el plato, no existe un ID");
+		}
+		Dieta actualDieta = repository.getDieta(nuevaDieta.getId());
+		if (actualDieta == null){
+			throw new BadRequestException("El Id " + nuevaDieta.getId() + " no corresponde a ninguna dieta" );
+		}
+		
+		if(nuevaDieta.getNombre() != null) 
+			throw new BadRequestException("Solo puede modificarse el listado de platos o la descripción de la dieta");
+		if(nuevaDieta.getTipo() != null) 
+			throw new BadRequestException("Solo puede modificarse el listado de platos o la descripción de la dieta");
+		/*Comprobación de que la Id de los platos introducidos existen: */
+		if(nuevaDieta.getPlatos() != null) {
+			List<Plato> platos = new LinkedList<>();
+			for (Plato plato : nuevaDieta.getPlatos()) {
+				Plato platoTemp = repository.getPlato(plato.getId());
+				if (platoTemp == null){
+					throw new BadRequestException("Ha introducido un plato que no existe: " + plato.getId() );
+				}
+				platos.add(platoTemp);
+			}
+			actualDieta.setPlatos(platos);
+			}
+		if(nuevaDieta.getDescripcion() !=null)
+			actualDieta.setDescripcion(nuevaDieta.getDescripcion());
+		repository.updateDieta(actualDieta);
+		return Response.noContent().build();
+	}
+	
+	
+	
+	
 	
 	@DELETE
 	@Path("/{id}")
