@@ -43,7 +43,6 @@ public class AlimentoResource {
 		repository=MapDietaRepository.getInstance();
 
 	}
-	
 	public static AlimentoResource getInstance()
 	{
 		if(_instance==null)
@@ -113,6 +112,12 @@ public class AlimentoResource {
 	@Produces("application/json")
 	public Collection<TipoAlimento> getTipoAlimento(){
 		return Arrays.asList(TipoAlimento.values());
+	}
+	@GET
+	@Path("/alergenos")
+	@Consumes("application/json")
+	public Collection<Alergeno> getListOfAler(){
+		return Arrays.asList(Alergeno.values());
 	}
 	
 	@POST
