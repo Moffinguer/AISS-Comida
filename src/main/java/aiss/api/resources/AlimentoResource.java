@@ -26,6 +26,7 @@ import aiss.model.Alergeno;
 import aiss.model.Alimento;
 import aiss.model.Categoria;
 import aiss.model.Dieta;
+import aiss.model.Plato;
 import aiss.model.Temporada;
 import aiss.model.TipoAlimento;
 import aiss.model.repository.DietaRepository;
@@ -88,8 +89,25 @@ public class AlimentoResource {
 		if(alimento == null) throw new NotFoundException("el alimento con ID: " + alimentoId + " no existe");
 		return alimento;
 	}
-
 	
+	@GET
+	@Produces("application/json")
+	public Collection <Alimento> getAlimentoPorCaracter(@QueryParam("s") String caracteres)
+	{
+		Collection<Alimento> alimentos = repository.getAllAlimentos();
+		if (caracteres.charAt(0)== '+' ) {
+			alimentos = alimentos.stream().filter(x->x.getNombre().startsWith(caracteres.substring(1, caracteres.length()))).collect(Collectors.toList());
+		}
+		else if (caracteres.charAt(0)== '-' ) {
+			alimentos = alimentos.stream().filter(x->x.getNombre().endsWith(caracteres.substring(1, caracteres.length()))).collect(Collectors.toList());
+		}
+		else {
+			alimentos = alimentos.stream().filter(x->x.getNombre().contains(caracteres.substring(1, caracteres.length()))).collect(Collectors.toList());
+		}
+		return alimentos;
+		
+	}
+
 	@GET
 	@Path("/tipos")
 	@Produces("application/json")
@@ -134,9 +152,16 @@ public class AlimentoResource {
 	@Path("/{id}")
 	public Response removeAlimento(@PathParam("id") String id) {
 		Alimento alimento=repository.getAlimento(id);
-		if (alimento == null)
+		if (alimento == null) {
 			throw new NotFoundException("El alimento con ID: " + id + " no existe");
-		else
+			}
+		else {
+			for (Plato plato : repository.getAllPlatos()) {
+				if (plato.getAlimentos().stream().anyMatch(x -> x.getAlimento().equals(alimento))) {
+					throw new BadRequestException("No puede eliminar el alimenta, ya que pertenece a algún plato");
+				}
+			}
+		}
 			repository.deleteAlimento(id);
 		
 		return Response.noContent().build();
