@@ -38,8 +38,7 @@ public class MapDietaRepository implements DietaRepository{
 		Alimento alimento, alimento2, alimento3, alimento4;
 		Dieta dieta;
 		Plato plato1, plato2;
-		int id = 50;
-		alimento = new Alimento((id++)+"al",
+		alimento = new Alimento(
 				"Merluza",
 				150.75,
 				Categoria.PESCADO,
@@ -47,50 +46,50 @@ public class MapDietaRepository implements DietaRepository{
 				Alergeno.PESCADO,
 				Temporada.VERANO
 				);
-		alimento2 = new Alimento((id++)+"al",
+		alimento2 = new Alimento(
 				"Chorizo",
 				2000.03,
 				Categoria.CARNE,
 				TipoAlimento.PROTEINAS,
-				null,
+				Alergeno.SOJA,
 				Temporada.OTOÑO
 				);
-		alimento3 = new Alimento((id++)+"al",
+		alimento3 = new Alimento(
 				"Manzana",
 				100.13,
 				Categoria.FRUTAS,
 				TipoAlimento.SALESMINERALES,
-				null,
-				null
+				Alergeno.LECHE,
+				Temporada.JULIO
 				);
 		List<Ingrediente> ingrediente2 = new LinkedList<Ingrediente>();
 		ingrediente2.add(new Ingrediente(alimento2, 500.));
-		plato2 = new Plato((id++)+"pl",
+		plato2 = new Plato(
 				"Chorizo Picante",
 				ingrediente2,
 				"Zamora",
 				"Leon",
-				null);
-		alimento4 = new Alimento((id++)+"al",
+				Temporada.DICIEMBRE);
+		alimento4 = new Alimento(
 				"Huevo",
 				150.69,
 				Categoria.HUEVOS,
-				null,
+				TipoAlimento.PROTEINAS,
 				Alergeno.HUEVOS,
-				null
+				Temporada.PRIMAVERA
 				);
 		List<Ingrediente> ingrediente1 = new LinkedList<Ingrediente>();
 		ingrediente1.add(new Ingrediente(alimento, 500.));
 		ingrediente1.add(new Ingrediente(alimento4, 50.));
-		plato1 = new Plato((id++)+"pl",
+		plato1 = new Plato(
 				"Merluza con Huevos",
 				ingrediente1,
 				"Cadiz",
 				"Andalucia",
-				null);
+				Temporada.ABRIL);
 		List<Plato> platos1 = new LinkedList<>();
 		platos1.add(plato1);
-		dieta = new Dieta((id++)+"di",
+		dieta = new Dieta(
 				"La dieta de los huevos",
 				"La de los lunes"
 				, platos1,
@@ -107,7 +106,8 @@ public class MapDietaRepository implements DietaRepository{
 
 	@Override
 	public void addAlimento(Alimento a) {
-		alimentoMap.put(a.getId(), a);
+		a.setId((index)+"al");
+		alimentoMap.put((index++)+"al", a);
 	}
 
 	@Override
@@ -136,7 +136,8 @@ public class MapDietaRepository implements DietaRepository{
 
 	@Override
 	public void addPlato(Plato p) {
-		platoMap.put(p.getId(), p);
+		p.setId((index)+"pl");
+		platoMap.put((index++)+"pl", p);
 		
 	}
 
@@ -161,12 +162,14 @@ public class MapDietaRepository implements DietaRepository{
 	@Override
 	public void deletePlato(String platoId) {
 		// TODO Auto-generated method stub
+		this.platoMap.remove(platoId);
 		
 	}
 
 	@Override
 	public void addDieta(Dieta d) {
-		dietaMap.put(d.getId(), d);
+		d.setId(index+"di");
+		dietaMap.put((index++)+"di", d);
 		
 	}
 
@@ -190,7 +193,7 @@ public class MapDietaRepository implements DietaRepository{
 
 	@Override
 	public void deleteDieta(String dietaId) {
-		// TODO Auto-generated method stub
+		dietaMap.remove(dietaId);
 		
 	}
 	
