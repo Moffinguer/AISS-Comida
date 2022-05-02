@@ -51,10 +51,12 @@ public class AlimentoResource {
 	@GET
 	@Produces("application/json")
 	public Collection<Alimento> getAll(@QueryParam("limit") Integer limit,
-			@QueryParam("offset") Integer offset){
+			@QueryParam("offset") Integer offset, @QueryParam("s") String caracteres){
 		
 		Collection<Alimento> alimentos= this.repository.getAllAlimentos();
-		
+		if(caracteres != null) {
+			getAlimentoPorCaracter(caracteres, alimentos);
+		}
 		//Para la paginacion
 		if( limit!=null || offset!=null ) {
 			try {
@@ -86,13 +88,9 @@ public class AlimentoResource {
 		if(alimento == null) throw new NotFoundException("el alimento con ID: " + alimentoId + " no existe");
 		return alimento;
 	}
-	
-	@GET
-	@Produces("application/json")
-	public Collection <Alimento> getAlimentoPorCaracter(@QueryParam("s") String caracteres)
+	private void getAlimentoPorCaracter(String caracteres, Collection<Alimento> alimentos)
 	{
-		Collection<Alimento> alimentos = repository.getAllAlimentos();
-		if (caracteres.charAt(0)== '+' ) {
+		if (caracteres.charAt(0)== 'X' ) {
 			alimentos = alimentos.stream().filter(x->x.getNombre().startsWith(caracteres.substring(1, caracteres.length()))).collect(Collectors.toList());
 		}
 		else if (caracteres.charAt(0)== '-' ) {
@@ -101,7 +99,6 @@ public class AlimentoResource {
 		else {
 			alimentos = alimentos.stream().filter(x->x.getNombre().contains(caracteres.substring(1, caracteres.length()))).collect(Collectors.toList());
 		}
-		return alimentos;
 		
 	}
 
