@@ -25,7 +25,9 @@ public class Plato {
 		public Plato (String nombre) {
 			this.nombre = nombre;
 		}
-		
+		public Plato(List<Ingrediente> alimentos) {
+			this.alimentos = alimentos;
+		}
 		public Plato (String nombre, List<Ingrediente> alimentos, String provinciaOrigen,
 				String CAOrigen, Temporada temporada) {
 			this.nombre = nombre;
