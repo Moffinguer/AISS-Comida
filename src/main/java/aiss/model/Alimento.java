@@ -8,7 +8,7 @@ public class Alimento {
 	private Double calorias;
 	private Categoria categoria;
 	private TipoAlimento tipo;
-	private Alergeno alergeno; //opcional?
+	private Alergeno alergeno; 
 	private Temporada temporada; //opcional
 	
 	//CONSTRUCTORES
@@ -17,10 +17,6 @@ public class Alimento {
 	public Alimento (String nombre) {
 		this.nombre = nombre;
 	}
-	
-	public Alimento (String id, String nombre) {
-		this.nombre = nombre;
-	}	
 	public Alimento(String id, String nombre, Double calorias, Categoria categoria, TipoAlimento tipo,
 			Alergeno alergeno, Temporada temporada) {
 		super();

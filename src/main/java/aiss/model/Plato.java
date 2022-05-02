@@ -26,14 +26,8 @@ public class Plato {
 			this.nombre = nombre;
 		}
 		
-		public Plato (String id, String nombre) {
-			this.id = id;
-			this.nombre = nombre;
-		}
-		
-		public Plato (String id, String nombre, List<Ingrediente> alimentos, String provinciaOrigen,
+		public Plato (String nombre, List<Ingrediente> alimentos, String provinciaOrigen,
 				String CAOrigen, Temporada temporada) {
-			this.id = id;
 			this.nombre = nombre;
 			this.alimentos = alimentos;
 			this.listaAlergenos = this.alimentos.stream().map(alimento -> alimento.getAlimento().getAlergeno()).collect(Collectors.toSet());

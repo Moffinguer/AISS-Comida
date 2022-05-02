@@ -18,18 +18,12 @@ public class Dieta {
 	public Dieta (String nombre) {
 		this.nombre = nombre;
 	}
-	public Dieta (String id, String nombre, String descripcion, List<Plato> platos, TipoDieta tipo) {
-		this.id = id;
+	public Dieta (String nombre, String descripcion, List<Plato> platos, TipoDieta tipo) {
 		this.nombre = nombre;
 		this.descripcion = descripcion;
 		this.platos = platos;
 		this.tipo = tipo;
 	}
-	public Dieta (String id, String nombre) {
-		this.id = id;
-		this.nombre = nombre;
-	}
-
 	public String getId() {
 		return id;
 	}
