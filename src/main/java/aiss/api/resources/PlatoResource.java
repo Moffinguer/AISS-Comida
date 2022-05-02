@@ -49,49 +49,57 @@ public class PlatoResource {
 				_instance=new PlatoResource();
 		return _instance;
 	}
-	
+	private void sorting(Collection<Plato> platos, Comparator options) {
+		platos = (Collection<Plato>) platos.stream().sorted(options).collect(Collectors.toList());
+	}
+	private void takeOptions(List<Comparator> options, String parameter, String ordering) {
+		if(parameter.equalsIgnoreCase("nombre")) {
+			if(ordering.equals("+")) {
+				options.add(Comparator.comparing(Plato::getNombre));
+			}else {
+				options.add(Comparator.comparing(Plato::getNombre).reversed());
+			}
+		}else {
+			if(ordering.equals("+")) {
+				options.add(Comparator.comparing(Plato::getCalorias));
+			}else {
+				options.add(Comparator.comparing(Plato::getCalorias).reversed());
+			}
+		}
+	}
+	private void checkRestrictions(String parameter, String ordering) {
+		if(!parameter.equalsIgnoreCase("nombre") && !parameter.equalsIgnoreCase("calorias")) {
+			throw new BadRequestException("Query \'" + parameter + "\', solo admite los valores \'nombre\' o \'calorias\'");
+		}
+		if(!ordering.equals("+") && !ordering.equals("-")) {
+			throw new BadRequestException("Solo se admiten los simbolos \'+\' y \'-\'");
+		}
+	}
 	@GET
 	@Produces("application/json")
 	public Collection<Plato> getAll(@QueryParam("sortBy") String sort){
 		List<Comparator> options = new LinkedList<>();
-		if(!sort.isEmpty()){
+		if(sort != null && !sort.isEmpty()){
 		for(String param: Arrays.asList(sort.split(","))) {
 			String parameter = param.substring(1);
-			if(!parameter.equalsIgnoreCase("nombre") && !parameter.equalsIgnoreCase("calorias")) {
-				throw new BadRequestException("Query \'" + parameter + "\', solo admite los valores \'nombre\' o \'calorias\'");
-			}
 			String ordering = "" + param.charAt(0);
-			if(!ordering.equals("+") && !ordering.equals("-")) {
-				throw new BadRequestException("Solo se admiten los simbolos \'+\' y \'-\'");
-			}
-			if(parameter.equalsIgnoreCase("nombre")) {
-				if(ordering.equals("+")) {
-					options.add(Comparator.comparing(Plato::getNombre));
-				}else {
-					options.add(Comparator.comparing(Plato::getNombre).reversed());
-				}
-			}else {
-				if(ordering.equals("+")) {
-					options.add(Comparator.comparing(Plato::getCalorias));
-				}else {
-					options.add(Comparator.comparing(Plato::getCalorias).reversed());
-				}
-			}
+			checkRestrictions(parameter, ordering);
+			takeOptions(options, parameter, ordering);
 		}
 		}
 		/*
 		 * Para poder filtrarlo por cada uno, como hay 3 posibilidades (que se filtre por los 2 campos, por 1, o por ninguno)
 		 */
 		Collection<Plato> res = repository.getAllPlatos();
-		try {
-			res = (List<Plato>) res.stream().sorted(options.get(0).thenComparing(options.get(1))).collect(Collectors.toList());
-		}catch(IndexOutOfBoundsException iobe){
-			try {
-				res = (List<Plato>) res.stream().sorted(options.get(0)).collect(Collectors.toList());
-			}catch(IndexOutOfBoundsException iobe2) {}
-		}finally {
-			return res;	
+		if(!options.isEmpty()) {
+			if(options.size() == 1) {
+				sorting(res, options.get(0));
+			}else {
+				sorting(res,options.get(0).thenComparing(options.get(1)));
+			}
 		}
+		return res;
+		
 	}
 	@GET
 	@Produces("application/json")
