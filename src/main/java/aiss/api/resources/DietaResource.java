@@ -74,20 +74,17 @@ public class DietaResource {
 	@GET
 	@Path("/{id}")
 	@Produces("application/json")
-	public Dieta get(@PathParam("id") String dietaId)
+	public Dieta get(@PathParam("id") String dietaId, @QueryParam("fields") String fields)
 	{
 		Dieta dieta = repository.getDieta(dietaId);
 		if(dieta == null) throw new NotFoundException("la dieta con ID: " + dietaId + " no existe");
+		selectDietaFields(dietaId, fields, dieta);
 		return dieta;
 	}
-	@GET
-	@Consumes("application/json")
-	@Path("/{id}")
-	public Dieta selectDietaFields(@QueryParam("fields") String fields, @PathParam("id") String id){
-		Dieta dieta = null;
+	private void selectDietaFields(String id, String fields, Dieta dieta){
 		Dieta resDieta = null;
+		if(fields != null) {
 		try {
-			dieta = repository.getDieta(id);
 			resDieta = new Dieta();
 			for(String field :  fields.split(",")) {
 				if(!field.equalsIgnoreCase("tipo") && !field.equalsIgnoreCase("platos")){
@@ -102,8 +99,7 @@ public class DietaResource {
 			}
 		}catch(NullPointerException npe) {
 			throw new NotFoundException("No existe una dieta con ID: " + id);
-		}finally {
-			return resDieta;
+		}
 		}
 	}
 	@POST
@@ -131,17 +127,15 @@ public class DietaResource {
 	}
 	
 	@PUT 
+	@Path("/{id}")
 	@Consumes("aplication/json")
-	public Response updateDiet(Dieta nuevaDieta) {
+	public Response updateDiet(@PathParam("id") String id, Dieta nuevaDieta) {
 		if(nuevaDieta == null) {
 			throw new BadRequestException("No se ha enviado ninguna modificación");
 		}
-		if(nuevaDieta.getId() == null || nuevaDieta.getId().isEmpty()) {
-			throw new BadRequestException("No podemos identificar el plato, no existe un ID");
-		}
-		Dieta actualDieta = repository.getDieta(nuevaDieta.getId());
+		Dieta actualDieta = repository.getDieta(id);
 		if (actualDieta == null){
-			throw new BadRequestException("El Id " + nuevaDieta.getId() + " no corresponde a ninguna dieta" );
+			throw new BadRequestException("El Id " + id + " no corresponde a ninguna dieta" );
 		}
 		
 		if(nuevaDieta.getNombre() != null) 
@@ -163,7 +157,7 @@ public class DietaResource {
 			}
 			actualDieta.setPlatos(platos);
 			}
-		if(nuevaDieta.getDescripcion() !=null)
+		if(nuevaDieta.getDescripcion() != null)
 			actualDieta.setDescripcion(nuevaDieta.getDescripcion());
 		repository.updateDieta(actualDieta);
 		return Response.noContent().build();
