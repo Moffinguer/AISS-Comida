@@ -199,9 +199,10 @@ public class MapDietaRepository implements DietaRepository{
 	
 	//para añadir alimentos a platos y platos a dietas
 	@Override
-	public void addAlimento(String platoId, String alimentoId) {
+	public void addAlimento(String platoId, String alimentoId, String cantidad) {
 		// TODO Auto-generated method stub
-		
+		Plato plato= getPlato(platoId);
+		plato.addAlimento(alimentoMap.get(alimentoId), Double.parseDouble(cantidad));
 	}
 
 	@Override
@@ -213,7 +214,8 @@ public class MapDietaRepository implements DietaRepository{
 	@Override
 	public void addPlato(String dietaId, String platoId) {
 		// TODO Auto-generated method stub
-		
+		Dieta dieta= getDieta(dietaId);
+		dieta.addPlato(platoMap.get(platoId));
 	}
 
 	@Override

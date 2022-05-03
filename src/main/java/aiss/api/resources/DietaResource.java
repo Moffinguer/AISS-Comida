@@ -181,7 +181,6 @@ public class DietaResource {
 	
 	@POST	
 	@Path("/{dietaId}/{platoId}")
-	@Consumes("text/plain")
 	@Produces("application/json")
 	public Response addSong(@Context UriInfo uriInfo,@PathParam("dietaId") String dietaId, @PathParam("platoId") String platoId)
 	{				
