@@ -82,13 +82,13 @@ public class PlatoResource {
 		if(caracteres != null && !caracteres.isEmpty()) {
 			Predicate<Plato> condition;
 			if (caracteres.startsWith(upperOption)) {
-				condition = x->x.getNombre().startsWith(caracteres.substring(1, caracteres.length()));
+				condition = x->x.getNombre().startsWith(caracteres.substring(1));
 			}
 			else if (caracteres.startsWith(lowerOption)) {
-				condition = x->x.getNombre().endsWith(caracteres.substring(1, caracteres.length()));
+				condition = x->x.getNombre().endsWith(caracteres.substring(1));
 			}
 			else {
-				condition = x->x.getNombre().contains(caracteres.substring(1, caracteres.length()));
+				condition = x->x.getNombre().contains(caracteres.substring(1));
 			}
 			platos = platos.stream().filter(x -> condition.test(x)).collect(Collectors.toList());
 		}
