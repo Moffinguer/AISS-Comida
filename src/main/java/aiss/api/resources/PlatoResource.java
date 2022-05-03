@@ -147,6 +147,54 @@ public class PlatoResource {
 		return plato;
 	}
 	
+	@GET
+	@Produces("application/json")
+	public Collection<Plato> getPlatosPorTemporada(@QueryParam("temporada") String temporada) {
+		Collection<Plato> platos = this.repository.getAllPlatos();
+		Collection<Plato> res = new ArrayList<>();
+		
+		if(Arrays.asList(Temporada.values()).stream().map(v -> v.toString().toUpperCase()).
+				anyMatch(v -> v.equals(temporada.toUpperCase()))) {
+			
+			res = platos.stream().filter(p -> p.getTemporada().toString().toUpperCase().equals(temporada.toUpperCase())).Collect(Collectors.toList());
+			
+		} else{
+			throw new BadRequestException("Temporada no válida")
+	    }
+		
+		return res;
+	}
+	
+	@GET
+	@Produces("application/json")
+	public Collection<Plato> getPlatosPorCA(@QueryParam("CAOrigen") String ca) {
+		Collection<Plato> platos = this.repository.getAllPlatos();
+		Collection<Plato> res = new ArrayList<>();
+			
+			res = platos.stream().filter(p -> p.getCAOrigen().toUpperCase().equals(ca.toUpperCase())).Collect(Collectors.toList());
+		
+		return res;
+	}
+	
+	@GET
+	@Produces("application/json")
+	public Collection<Plato> getPlatosPorTipoDieta(@QueryParam("tipoDieta") String tipoDieta) {
+		Collection<Plato> platos = this.repository.getAllPlatos();
+		Collection<Plato> res = new ArrayList<>();
+		
+		if(Arrays.asList(TipoDieta.values()).stream().map(v -> v.toString().toUpperCase()).
+				anyMatch(v -> v.equals(tipoDieta.toUpperCase()))) {
+			
+		    res = repository.getAllDietas().stream().filter(d -> d.getTipo().toString().toUpperCase().equals(tipoDieta.toUpperCase())).
+				map(d -> d.getPlatos()).collect(Collectors.toSet());
+			
+		} else{
+			throw new BadRequestException("Tipo de dieta no válida")
+	    }
+		
+		return res;
+	}
+	
 	@PUT
 	@Consumes("application/json")
 	public Response updateDish(Plato nuevoPlato) {
@@ -220,6 +268,27 @@ public class PlatoResource {
 	}
 	
 	@POST	
+	@Consumes("application/json")
+	@Produces("application/json")
+	public Response addPlato(@Context UriInfo uriInfo, Plato plato) {	
+		if(plato.getNombre() == null || plato.getNombre().equals("")) throw new BadRequestException("El nombre del plato no puede ser nulo");
+		if(plato.getAlimentos() == null || plato.getAlimentos().isEmpty()) throw new BadRequestException("La lista de alimentos no puede ser nula o estar vacía");
+		if(plato.getCAOrigen() == null || plato.getCAOrigen().equals("")) throw new BadRequestException("La comunidad autónoma de origen del plato no puede ser nula");
+		
+		Collection<Temporada> temporadas = Arrays.asList(Temporada.values());
+		if(!temporadas.contains(plato.getTemporada())) {
+			throw new BadRequestException("Temporada no válida");
+		}
+		
+		repository.addPlato(plato);
+		UriBuilder ub = uriInfo.getAbsolutePathBuilder().path(this.getClass(), "get");
+		URI uri = ub.build(plato.getId());
+		ResponseBuilder respb = Response.created(uri);
+		respb.entity(plato);
+		return respb.build();
+	}	
+	
+	@POST	
 	@Path("/{platoId}/{alimentoId}")
 	@Produces("application/json")
 	public Response addPlato(@Context UriInfo uriInfo,@PathParam("platoId") String platoId,
@@ -256,6 +325,24 @@ public class PlatoResource {
 		ResponseBuilder resp = Response.created(uri);
 		resp.entity(plato);			
 		return resp.build();
+	}
+	
+	@DELETE
+	@Path("/{id}")
+	public Response removePlato(@PathParam("id") String id) {
+		Plato plato = repository.getPlato(id);
+		if (plato == null) {
+			throw new NotFoundException("El plato con ID: " + id + " no existe");
+		}else {
+			for (Dieta dieta : repository.getAllDietas()) {
+				if (dieta.getPlatos().stream().anyMatch(p -> p.equals(plato))) {
+					throw new BadRequestException("No se puede eliminar el plato, ya que pertenece a alguna dieta");
+				}
+			}
+		}
+		repository.deletePlato(id);
+		
+		return Response.noContent().build();
 	}
 	
 	@DELETE	

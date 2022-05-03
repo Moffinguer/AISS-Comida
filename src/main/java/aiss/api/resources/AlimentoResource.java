@@ -115,6 +115,60 @@ public class AlimentoResource {
 		return Arrays.asList(Alergeno.values());
 	}
 	
+	@GET
+	@Produces("application/json")
+	public Collection<Alimento> getAlimentosPorTemporada(@QueryParam("temporada") String temporada) {
+		Collection<Alimento> alimentos = this.repository.getAllAlimentos();
+		Collection<Alimento> res = new ArrayList<>();
+		
+		if(Arrays.asList(Temporada.values()).stream().map(v -> v.toString().toUpperCase()).
+				anyMatch(v -> v.equals(temporada.toUpperCase()))) {
+			
+			res = alimentos.stream().filter(a -> a.getTemporada().toString().toUpperCase().equals(temporada.toUpperCase())).Collect(Collectors.toList());
+			
+		} else{
+			throw new BadRequestException("Temporada no válida")
+	    }
+		
+		return res;
+	}
+	
+	@GET
+	@Produces("application/json")
+	public Collection<Alimento> getAlimentosPorTipo(@QueryParam("tipo") String tipo) {
+		Collection<Alimento> alimentos = this.repository.getAllAlimentos();
+		Collection<Alimento> res= new ArrayList<>();
+		
+		if(Arrays.asList(TipoAlimento.values()).stream().map(v -> v.toString().toUpperCase()).
+				anyMatch(v -> v.equals(tipo.toUpperCase()))) {
+			
+			res = alimentos.stream().filter(a -> a.getTipo().toString().toUpperCase().equals(tipo.toUpperCase())).Collect(Collectors.toList());
+			
+		} else{
+			throw new BadRequestException("Tipo de alimento no válido")
+	    }
+		
+		return res;
+	}
+	
+	@GET
+	@Produces("application/json")
+	public Collection<Alimento> getAlimentosPorCategoria(@QueryParam("categoria") String categoria) {
+		Collection<Alimento> alimentos = this.repository.getAllAlimentos();
+		Collection<Alimento> res= new ArrayList<>();
+		
+		if(Arrays.asList(Categoria.values()).stream().map(v -> v.toString().toUpperCase()).
+				anyMatch(v -> v.equals(categoria.toUpperCase()))) {
+			
+			res = alimentos.stream().filter(a -> a.getCategoria().toString().toUpperCase().equals(categoria.toUpperCase())).Collect(Collectors.toList());
+			
+		} else{
+			throw new BadRequestException("Categoría no válida")
+	    }
+		
+		return res;
+	}
+	
 	@POST
 	@Consumes("application/json")
 	@Produces("application/json")
