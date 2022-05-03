@@ -3,6 +3,7 @@ package aiss.api.resources;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,7 +66,7 @@ public class PlatoResource {
 				takeOptions(options, parameter, ordering);
 			}
 		}
-		Collection<Plato> res = repository.getAllPlatos();
+		Collection<Plato> res = new LinkedList<>(repository.getAllPlatos());
 		getPlatoPorCaracter(res, caracteres);
 		if(!options.isEmpty()) {
 			if(options.size() == 1) {
@@ -82,33 +83,37 @@ public class PlatoResource {
 		
 		if(caracteres != null && !caracteres.isEmpty()) {
 			Predicate<Plato> condition;
-			if (caracteres.startsWith(upperOption)) {
-				condition = x->x.getNombre().startsWith(caracteres.substring(1));
+			if (caracteres.startsWith("X")) {
+				condition = x-> !x.getNombre().toLowerCase().startsWith(caracteres.substring(1).toLowerCase());
 			}
-			else if (caracteres.startsWith(lowerOption)) {
-				condition = x->x.getNombre().endsWith(caracteres.substring(1));
+			else if (caracteres.startsWith("-")) {
+				condition = x-> !x.getNombre().toLowerCase().endsWith(caracteres.substring(1).toLowerCase());
 			}
 			else {
-				condition = x->x.getNombre().contains(caracteres.substring(1));
+				condition = x-> !x.getNombre().toLowerCase().contains(caracteres.toLowerCase());
 			}
-			platos = platos.stream().filter(x -> condition.test(x)).collect(Collectors.toList());
+			for(Plato plato: platos) {
+				if(condition.test(plato)) { 
+					platos.remove(plato);
+				}
+			}
 		}
 	}
 	private void sorting(Collection<Plato> platos, Comparator options) {
-		platos = (Collection<Plato>) platos.stream().sorted(options).collect(Collectors.toList());
-	}
+		Collections.sort((List<Plato>) platos, options);
+		}
 	private void takeOptions(List<Comparator> options, String parameter, String ordering) {
 		/*
 		 * Para poder filtrarlo por cada uno, como hay 3 posibilidades (que se filtre por los 2 campos, por 1, o por ninguno)
 		 */
 		if(parameter.equalsIgnoreCase("nombre")) {
-			if(ordering.equals(upperOption)) {
+			if(ordering.equals("X")) {
 				options.add(Comparator.comparing(Plato::getNombre).reversed());
 			}else {
 				options.add(Comparator.comparing(Plato::getNombre));
 			}
 		}else {
-			if(ordering.equals(upperOption)) {
+			if(ordering.equals("X")) {
 				options.add(Comparator.comparing(Plato::getCalorias).reversed());
 			}else {
 				options.add(Comparator.comparing(Plato::getCalorias));
@@ -119,25 +124,24 @@ public class PlatoResource {
 		if(!parameter.equalsIgnoreCase("nombre") && !parameter.equalsIgnoreCase("calorias")) {
 			throw new BadRequestException("Query \'" + parameter + "\', solo admite los valores \'nombre\' o \'calorias\'");
 		}
-		if(!ordering.equals(upperOption) && !ordering.equals(lowerOption)) {
+		if(!ordering.equals("X") && !ordering.equals("-")) {
 			throw new BadRequestException("Solo se admiten los simbolos \'X\' y \'-\' pero se ha usado \'" + ordering + "\'");
 		}
 	}
 	
 	@PUT
-	@Path("/{id}")
 	@Consumes("application/json")
-	public Response updateDish(@PathParam("id") String id, Plato nuevoPlato) {
+	public Response updateDish(Plato nuevoPlato) {
 		if(nuevoPlato == null) {
 			throw new BadRequestException("No se ha enviado ninguna modificación");
 		}
-		if(id == null || id.isEmpty()) {
+		if(nuevoPlato.getId() == null || nuevoPlato.getId().isEmpty()) {
 			throw new BadRequestException("No podemos identificar el plato, no existe un ID");
 		}
-		Plato actualPlato = repository.getPlato(id);
+//		checkFieldsNotFilled(nuevoPlato);
+		Plato actualPlato = repository.getPlato(nuevoPlato.getId());
 		if(actualPlato == null)
 			throw new BadRequestException("No podemos identificar el plato, no existe un ID como " + nuevoPlato.getId());
-		checkFieldsNotFilled(nuevoPlato);
 		if(nuevoPlato.getAlimentos() != null) {
 			List<Ingrediente> ingredientes = new LinkedList<>();
 			try {
@@ -167,63 +171,5 @@ public class PlatoResource {
 			}
 			ingredientes.add(new Ingrediente(alimento, cantidad));
 		}
-	}
-
-	private void checkFieldsNotFilled(Plato nuevoPlato) {
-		/*
-		 * Compruebo que ningún campo esté siendo modificado, salvo el de los alimentos
-		 * En caso de que hubiera alguno no definido, en la petición, lanzaría un error
-		 */
-			if(nuevoPlato.getCalorias() != null) 
-				throw new BadRequestException("Solo puede modificarse el listado de alimentos");
-			if(nuevoPlato.getListaAlergenos() != null) 
-				throw new BadRequestException("Solo puede modificarse el listado de alimentos");
-			if(nuevoPlato.getNombre() != null) 
-				throw new BadRequestException("Solo puede modificarse el listado de alimentos");
-			if(nuevoPlato.getCAOrigen() != null) 
-				throw new BadRequestException("Solo puede modificarse el listado de alimentos");
-			if(nuevoPlato.getTemporada() != null) 
-				throw new BadRequestException("Solo puede modificarse el listado de alimentos");
-			if(nuevoPlato.getId() != null)
-				throw new BadRequestException("Solo puede modificarse el listado de alimentos");
-	}
-	
-	@POST	
-	@Path("/{platoId}/{alimentoId}")
-	@Produces("application/json")
-	public Response addSong(@Context UriInfo uriInfo,@PathParam("platoId") String platoId,
-			@PathParam("alimentoId") String alimentoId,
-			@QueryParam("cantidad") String cantidad)
-	{				
-		if(cantidad == null) {
-			throw new BadRequestException("La cantidad no puede ser nula");
-		}
-		try {
-			Double.parseDouble(cantidad);
-		} catch(NumberFormatException e){
-			throw new BadRequestException("La cantidad debe ser un número");
-	    }
-		
-		
-		Alimento alimento = repository.getAlimento(alimentoId);
-		Plato plato = repository.getPlato(platoId);
-		
-		if (alimento==null)
-			throw new NotFoundException("La dieta con ID: " + alimentoId + " no existe");
-		
-		if (plato == null)
-			throw new NotFoundException("El plato con ID: " + platoId + " no existe");
-		
-		if (plato.getAlimento(alimentoId)!=null)
-			throw new BadRequestException("El alimento con ID: " + alimentoId + " ya está presente en el alimento con ID: " + alimentoId);
-			
-		repository.addAlimento(platoId, alimentoId, cantidad);		
-
-		// para la respuesta.
-		UriBuilder ub = uriInfo.getAbsolutePathBuilder().path(this.getClass(), "get");
-		URI uri = ub.build(platoId);
-		ResponseBuilder resp = Response.created(uri);
-		resp.entity(plato);			
-		return resp.build();
 	}
 }

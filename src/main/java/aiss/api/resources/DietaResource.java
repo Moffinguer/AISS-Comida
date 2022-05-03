@@ -78,10 +78,10 @@ public class DietaResource {
 	{
 		Dieta dieta = repository.getDieta(dietaId);
 		if(dieta == null) throw new NotFoundException("la dieta con ID: " + dietaId + " no existe");
-		selectDietaFields(dietaId, fields, dieta);
-		return dieta;
+		Dieta res = selectDietaFields(dietaId, fields, dieta);
+		return res;
 	}
-	private void selectDietaFields(String id, String fields, Dieta dieta){
+	private Dieta selectDietaFields(String id, String fields, Dieta dieta){
 		Dieta resDieta = null;
 		if(fields != null) {
 		try {
@@ -97,10 +97,12 @@ public class DietaResource {
 					resDieta.setPlatos(dieta.getPlatos());
 				}
 			}
+			return resDieta;
 		}catch(NullPointerException npe) {
 			throw new NotFoundException("No existe una dieta con ID: " + id);
 		}
 		}
+		return dieta;
 	}
 	@POST
 	@Consumes("application/json")
@@ -127,21 +129,17 @@ public class DietaResource {
 	}
 	
 	@PUT 
-	@Path("/{id}")
-	@Consumes("aplication/json")
-	public Response updateDiet(@PathParam("id") String id, Dieta nuevaDieta) {
+	@Consumes("application/json")
+	public Response updateDiet(Dieta nuevaDieta) {
 		if(nuevaDieta == null) {
 			throw new BadRequestException("No se ha enviado ninguna modificación");
 		}
-		Dieta actualDieta = repository.getDieta(id);
+		if(nuevaDieta.getId() == null)
+			throw new BadRequestException("No existe ningún id en la consulta" );
+		Dieta actualDieta = repository.getDieta(nuevaDieta.getId());
 		if (actualDieta == null){
-			throw new BadRequestException("El Id " + id + " no corresponde a ninguna dieta" );
+			throw new BadRequestException("El Id " + nuevaDieta.getId() + " no corresponde a ninguna dieta" );
 		}
-		
-		if(nuevaDieta.getNombre() != null) 
-			throw new BadRequestException("Solo puede modificarse el listado de platos o la descripción de la dieta");
-		if(nuevaDieta.getTipo() != null) 
-			throw new BadRequestException("Solo puede modificarse el listado de platos o la descripción de la dieta");
 		/*Comprobación de que la Id de los platos introducidos existen: */
 		if(nuevaDieta.getPlatos() != null) {
 			List<Plato> platos = new LinkedList<>();
