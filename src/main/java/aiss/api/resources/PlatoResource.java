@@ -11,6 +11,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -255,5 +256,24 @@ public class PlatoResource {
 		ResponseBuilder resp = Response.created(uri);
 		resp.entity(plato);			
 		return resp.build();
+	}
+	
+	@DELETE	
+	@Path("/{platoId}/{alimentoId}")
+	public Response removeAlimento(@PathParam("platoId") String platoId, @PathParam("alimentoId") String alimentoId) {
+		
+		Alimento alimento = repository.getAlimento(alimentoId);
+		Plato plato = repository.getPlato(platoId);
+		
+		if (alimento==null)
+			throw new NotFoundException("La dieta con ID: " + alimentoId + " no existe");
+		
+		if (plato == null)
+			throw new NotFoundException("El plato con ID: " + platoId + " no existe");
+		
+		
+		repository.deleteAlimento(platoId, alimentoId);		
+		
+		return Response.noContent().build();
 	}
 }

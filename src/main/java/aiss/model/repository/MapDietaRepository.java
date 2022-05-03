@@ -208,7 +208,8 @@ public class MapDietaRepository implements DietaRepository{
 	@Override
 	public void deleteAlimento(String platoId, String alimentoId) {
 		// TODO Auto-generated method stub
-		
+		Plato plato= getPlato(platoId);
+		plato.deleteAlimento(alimentoId);
 	}
 
 	@Override
