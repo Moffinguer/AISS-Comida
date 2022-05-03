@@ -108,7 +108,7 @@ public class PlatoResource {
 		repository.addAlimento(platoId, alimentoId, cantidad);		
 
 		// para la respuesta.
-		UriBuilder ub = uriInfo.getAbsolutePathBuilder().path(this.getClass(), "get");
+		UriBuilder ub = uriInfo.getAbsolutePathBuilder().path(this.getClass(), "getPlato");
 		URI uri = ub.build(platoId);
 		ResponseBuilder resp = Response.created(uri);
 		resp.entity(plato);			
@@ -135,6 +135,17 @@ public class PlatoResource {
 			}
 		}
 	}
+	
+	@GET
+	@Path("/{id}")
+	@Produces("application/json")
+	public Plato getPlato(@PathParam("id") String platoId)
+	{
+		Plato plato = repository.getPlato(platoId);
+		if(plato == null) throw new NotFoundException("el alimento con ID: " + platoId + " no existe");
+		return plato;
+	}
+	
 	@PUT
 	@Consumes("application/json")
 	public Response updateDish(Plato nuevoPlato) {
@@ -205,5 +216,44 @@ public class PlatoResource {
 		if(!ordering.equals("X") && !ordering.equals("-")) {
 			throw new BadRequestException("Solo se admiten los simbolos \'X\' y \'-\' pero se ha usado \'" + ordering + "\'");
 		}
+	}
+	
+	@POST	
+	@Path("/{platoId}/{alimentoId}")
+	@Produces("application/json")
+	public Response addPlato(@Context UriInfo uriInfo,@PathParam("platoId") String platoId,
+			@PathParam("alimentoId") String alimentoId,
+			@QueryParam("cantidad") String cantidad)
+	{				
+		if(cantidad == null) {
+			throw new BadRequestException("La cantidad no puede ser nula");
+		}
+		try {
+			Double.parseDouble(cantidad);
+		} catch(NumberFormatException e){
+			throw new BadRequestException("La cantidad debe ser un número");
+	    }
+		
+		
+		Alimento alimento = repository.getAlimento(alimentoId);
+		Plato plato = repository.getPlato(platoId);
+		
+		if (alimento==null)
+			throw new NotFoundException("La dieta con ID: " + alimentoId + " no existe");
+		
+		if (plato == null)
+			throw new NotFoundException("El plato con ID: " + platoId + " no existe");
+		
+		if (plato.getAlimento(alimentoId)!=null)
+			throw new BadRequestException("El alimento con ID: " + alimentoId + " ya está presente en el alimento con ID: " + alimentoId);
+			
+		repository.addAlimento(platoId, alimentoId, cantidad);		
+
+		// para la respuesta.
+		UriBuilder ub = uriInfo.getAbsolutePathBuilder().path(this.getClass(), "getPlato");
+		URI uri = ub.build(platoId);
+		ResponseBuilder resp = Response.created(uri);
+		resp.entity(plato);			
+		return resp.build();
 	}
 }
