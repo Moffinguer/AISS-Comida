@@ -101,6 +101,15 @@ public class MapDietaRepository implements DietaRepository{
 		instance.addPlato(plato1);
 		instance.addPlato(plato2);
 		instance.addDieta(dieta);
+		alimento4 = new Alimento(
+				"Leche",
+				150.69,
+				Categoria.lACTEOS,
+				TipoAlimento.LIPIDOS,
+				Alergeno.LECHE,
+				Temporada.PRIMAVERA
+				);
+		instance.addAlimento(alimento4);
 	}
 	
 
