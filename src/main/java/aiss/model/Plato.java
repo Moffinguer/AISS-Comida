@@ -1,12 +1,16 @@
 package aiss.model;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonSerialize(include = Inclusion.NON_NULL)
 public class Plato {
 		
 		//ATRIBUTOS

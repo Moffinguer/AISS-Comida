@@ -1,5 +1,9 @@
 package aiss.model;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+
+@JsonSerialize(include = Inclusion.NON_NULL)
 public class Alimento {
 	
 	//ATRIBUTOS
