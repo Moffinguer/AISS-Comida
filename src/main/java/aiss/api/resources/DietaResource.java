@@ -130,7 +130,7 @@ public class DietaResource {
 	
 	@PUT 
 	@Consumes("application/json")
-	public Response updateDiet(Dieta nuevaDieta) {
+	public Response updateDieta(Dieta nuevaDieta) {
 		if(nuevaDieta == null) {
 			throw new BadRequestException("No se ha enviado ninguna modificación");
 		}
@@ -180,7 +180,7 @@ public class DietaResource {
 	@POST	
 	@Path("/{dietaId}/{platoId}")
 	@Produces("application/json")
-	public Response addSong(@Context UriInfo uriInfo,@PathParam("dietaId") String dietaId, @PathParam("platoId") String platoId)
+	public Response addPlato(@Context UriInfo uriInfo,@PathParam("dietaId") String dietaId, @PathParam("platoId") String platoId)
 	{				
 		
 		Dieta dieta = repository.getDieta(dietaId);
@@ -208,7 +208,7 @@ public class DietaResource {
 	
 	@DELETE
 	@Path("/{dietaId}/{platoId}")
-	public Response removeSong(@PathParam("dietaId") String dietaId, @PathParam("platoId") String platoId) {
+	public Response removePlato(@PathParam("dietaId") String dietaId, @PathParam("platoId") String platoId) {
 		Dieta dieta = repository.getDieta(dietaId);
 		Plato plato = repository.getPlato(platoId);
 		
