@@ -34,6 +34,8 @@ import aiss.model.Alimento;
 import aiss.model.Dieta;
 import aiss.model.Ingrediente;
 import aiss.model.Plato;
+import aiss.model.Temporada;
+import aiss.model.TipoDieta;
 import aiss.model.repository.DietaRepository;
 import aiss.model.repository.MapDietaRepository;
 
@@ -187,7 +189,7 @@ public class PlatoResource {
 				anyMatch(v -> v.equals(tipoDieta.toUpperCase()))) {
 			
 		    res = repository.getAllDietas().stream().filter(d -> d.getTipo().toString().toUpperCase().equals(tipoDieta.toUpperCase())).
-				map(d -> d.getPlatos()).collect(Collectors.toSet());
+				flatMap(d -> d.getPlatos().stream()).collect(Collectors.toSet());
 			
 		} else{
 			throw new BadRequestException("Tipo de dieta no válida");
