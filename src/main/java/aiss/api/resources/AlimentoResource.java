@@ -3,6 +3,7 @@ package aiss.api.resources;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
@@ -124,10 +125,10 @@ public class AlimentoResource {
 		if(Arrays.asList(Temporada.values()).stream().map(v -> v.toString().toUpperCase()).
 				anyMatch(v -> v.equals(temporada.toUpperCase()))) {
 			
-			res = alimentos.stream().filter(a -> a.getTemporada().toString().toUpperCase().equals(temporada.toUpperCase())).Collect(Collectors.toList());
+			res = alimentos.stream().filter(a -> a.getTemporada().toString().toUpperCase().equals(temporada.toUpperCase())).collect(Collectors.toList());
 			
 		} else{
-			throw new BadRequestException("Temporada no válida")
+			throw new BadRequestException("Temporada no válida");
 	    }
 		
 		return res;
@@ -142,10 +143,10 @@ public class AlimentoResource {
 		if(Arrays.asList(TipoAlimento.values()).stream().map(v -> v.toString().toUpperCase()).
 				anyMatch(v -> v.equals(tipo.toUpperCase()))) {
 			
-			res = alimentos.stream().filter(a -> a.getTipo().toString().toUpperCase().equals(tipo.toUpperCase())).Collect(Collectors.toList());
+			res = alimentos.stream().filter(a -> a.getTipo().toString().toUpperCase().equals(tipo.toUpperCase())).collect(Collectors.toList());
 			
 		} else{
-			throw new BadRequestException("Tipo de alimento no válido")
+			throw new BadRequestException("Tipo de alimento no válido");
 	    }
 		
 		return res;
@@ -160,10 +161,10 @@ public class AlimentoResource {
 		if(Arrays.asList(Categoria.values()).stream().map(v -> v.toString().toUpperCase()).
 				anyMatch(v -> v.equals(categoria.toUpperCase()))) {
 			
-			res = alimentos.stream().filter(a -> a.getCategoria().toString().toUpperCase().equals(categoria.toUpperCase())).Collect(Collectors.toList());
+			res = alimentos.stream().filter(a -> a.getCategoria().toString().toUpperCase().equals(categoria.toUpperCase())).collect(Collectors.toList());
 			
 		} else{
-			throw new BadRequestException("Categoría no válida")
+			throw new BadRequestException("Categoría no válida");
 	    }
 		
 		return res;

@@ -3,6 +3,7 @@ package aiss.api.resources;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -156,10 +157,10 @@ public class PlatoResource {
 		if(Arrays.asList(Temporada.values()).stream().map(v -> v.toString().toUpperCase()).
 				anyMatch(v -> v.equals(temporada.toUpperCase()))) {
 			
-			res = platos.stream().filter(p -> p.getTemporada().toString().toUpperCase().equals(temporada.toUpperCase())).Collect(Collectors.toList());
+			res = platos.stream().filter(p -> p.getTemporada().toString().toUpperCase().equals(temporada.toUpperCase())).collect(Collectors.toList());
 			
 		} else{
-			throw new BadRequestException("Temporada no válida")
+			throw new BadRequestException("Temporada no válida");
 	    }
 		
 		return res;
@@ -171,7 +172,7 @@ public class PlatoResource {
 		Collection<Plato> platos = this.repository.getAllPlatos();
 		Collection<Plato> res = new ArrayList<>();
 			
-			res = platos.stream().filter(p -> p.getCAOrigen().toUpperCase().equals(ca.toUpperCase())).Collect(Collectors.toList());
+			res = platos.stream().filter(p -> p.getCAOrigen().toUpperCase().equals(ca.toUpperCase())).collect(Collectors.toList());
 		
 		return res;
 	}
@@ -189,7 +190,7 @@ public class PlatoResource {
 				map(d -> d.getPlatos()).collect(Collectors.toSet());
 			
 		} else{
-			throw new BadRequestException("Tipo de dieta no válida")
+			throw new BadRequestException("Tipo de dieta no válida");
 	    }
 		
 		return res;
