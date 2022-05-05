@@ -231,7 +231,8 @@ public class MapDietaRepository implements DietaRepository{
 	@Override
 	public void deletePlato(String dietaId, String platoId) {
 		// TODO Auto-generated method stub
-		
+		Dieta dieta= getDieta(dietaId);
+		dieta.deletePlato(platoId);
 	}
 
 }
