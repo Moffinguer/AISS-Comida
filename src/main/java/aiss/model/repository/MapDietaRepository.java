@@ -233,6 +233,7 @@ public class MapDietaRepository implements DietaRepository{
 		// TODO Auto-generated method stub
 		Dieta dieta= getDieta(dietaId);
 		dieta.deletePlato(platoId);
+		
 	}
 
 }
