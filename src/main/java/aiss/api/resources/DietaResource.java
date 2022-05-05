@@ -115,8 +115,20 @@ public class DietaResource {
 			throw new BadRequestException("Una dieta debe contener platos");
 		
 		Collection<TipoDieta> tiposDieta=Arrays.asList(TipoDieta.values());
-		if(tiposDieta.contains(dieta.getTipo()))
+		if(!tiposDieta.contains(dieta.getTipo()))
 			throw new BadRequestException("Tipo de dieta no válido");
+		
+		List<Plato> platos = dieta.getPlatos();
+		for(int i = 0; i < platos.size(); i++) {
+			Plato platoBody = dieta.getPlatos().get(i);
+			Plato platoRepo = repository.getPlato(platoBody.getId());
+			if(platoRepo == null) {
+				throw new BadRequestException("El plato con ID: " + platoBody.getId() + " no existe");
+			} else {
+				platos.set(i, platoRepo);
+			}
+		}
+		dieta.setPlatos(platos);
 		
 		repository.addDieta(dieta);
 
