@@ -56,7 +56,7 @@ public class AlimentoResource {
 		
 		Collection<Alimento> alimentos= this.repository.getAllAlimentos();
 		if(caracteres != null) {
-			getAlimentoPorCaracter(caracteres, alimentos);
+			alimentos= getAlimentoPorCaracter(caracteres, alimentos);
 		}
 		//Para la paginacion
 		if( limit!=null || offset!=null ) {
@@ -89,7 +89,8 @@ public class AlimentoResource {
 		if(alimento == null) throw new NotFoundException("el alimento con ID: " + alimentoId + " no existe");
 		return alimento;
 	}
-	private void getAlimentoPorCaracter(String caracteres, Collection<Alimento> alimentos)
+	
+	private Collection<Alimento> getAlimentoPorCaracter(String caracteres, Collection<Alimento> alimentos)
 	{
 		if (caracteres.charAt(0)== 'X' ) {
 			alimentos = alimentos.stream().filter(x->x.getNombre().startsWith(caracteres.substring(1, caracteres.length()))).collect(Collectors.toList());
@@ -100,6 +101,8 @@ public class AlimentoResource {
 		else {
 			alimentos = alimentos.stream().filter(x->x.getNombre().contains(caracteres.substring(1, caracteres.length()))).collect(Collectors.toList());
 		}
+		
+		return alimentos;
 		
 	}
 
@@ -128,7 +131,7 @@ public class AlimentoResource {
 			res = alimentos.stream().filter(a -> a.getTemporada().toString().toUpperCase().equals(temporada.toUpperCase())).collect(Collectors.toList());
 			
 		} else{
-			throw new BadRequestException("Temporada no válida");
+			throw new BadRequestException("Temporada no vï¿½lida");
 	    }
 		
 		return res;
@@ -146,7 +149,7 @@ public class AlimentoResource {
 			res = alimentos.stream().filter(a -> a.getTipo().toString().toUpperCase().equals(tipo.toUpperCase())).collect(Collectors.toList());
 			
 		} else{
-			throw new BadRequestException("Tipo de alimento no válido");
+			throw new BadRequestException("Tipo de alimento no vï¿½lido");
 	    }
 		
 		return res;
@@ -164,7 +167,7 @@ public class AlimentoResource {
 			res = alimentos.stream().filter(a -> a.getCategoria().toString().toUpperCase().equals(categoria.toUpperCase())).collect(Collectors.toList());
 			
 		} else{
-			throw new BadRequestException("Categoría no válida");
+			throw new BadRequestException("Categorï¿½a no vï¿½lida");
 	    }
 		
 		return res;
@@ -192,11 +195,11 @@ public class AlimentoResource {
 		if(!tiposCategorias.contains(alimento.getCategoria())) {
 			throw new BadRequestException("CategorÃ­a no vÃ¡lida");
 		}
-		if(!tiposTemporadas.contains(alimento.getTemporada())) {
+		if(alimento.getTemporada()!=null && !tiposTemporadas.contains(alimento.getTemporada())) {
 			throw new BadRequestException("Temporada no vÃ¡lida");
 		}
 		repository.addAlimento(alimento);
-		UriBuilder ub = uriInfo.getAbsolutePathBuilder().path(this.getClass(), "get");
+		UriBuilder ub = uriInfo.getAbsolutePathBuilder().path(this.getClass(), "getAlimento");
 		URI uri = ub.build(alimento.getId());
 		ResponseBuilder respb = Response.created(uri);
 		respb.entity(alimento);

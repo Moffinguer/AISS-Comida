@@ -60,7 +60,7 @@ public class PlatoResource {
 	@Produces("application/json")
 	public Collection<Plato> getAll(@QueryParam("sortBy") String sort, @QueryParam("s") String caracteres){
 		List<Comparator> options = new LinkedList<>();
-		if(sort != null && !sort.isEmpty()) {
+		if(sort != null) {
 			for(String param: Arrays.asList(sort.split(","))) {
 				String parameter = param.substring(1);
 				String ordering = param.substring(0,1);
@@ -69,7 +69,9 @@ public class PlatoResource {
 			}
 		}
 		Collection<Plato> res = new LinkedList<>(repository.getAllPlatos());
-		getPlatoPorCaracter(res, caracteres);
+		if(caracteres != null) {
+			res= getPlatoPorCaracter(res, caracteres);
+		}
 		if(!options.isEmpty()) {
 			if(options.size() == 1) {
 				sorting(res, options.get(0));
@@ -80,64 +82,20 @@ public class PlatoResource {
 		return res;
 		
 	}
-	@POST	
-	@Path("/{platoId}/{alimentoId}")
-	@Produces("application/json")
-	public Response addSong(@Context UriInfo uriInfo,@PathParam("platoId") String platoId,
-			@PathParam("alimentoId") String alimentoId,
-			@QueryParam("cantidad") String cantidad)
-	{				
-		if(cantidad == null) {
-			throw new BadRequestException("La cantidad no puede ser nula");
-		}
-		try {
-			Double.parseDouble(cantidad);
-		} catch(NumberFormatException e){
-			throw new BadRequestException("La cantidad debe ser un nÃºmero");
-	    }
-		
-		
-		Alimento alimento = repository.getAlimento(alimentoId);
-		Plato plato = repository.getPlato(platoId);
-		
-		if (alimento==null)
-			throw new NotFoundException("La dieta con ID: " + alimentoId + " no existe");
-		
-		if (plato == null)
-			throw new NotFoundException("El plato con ID: " + platoId + " no existe");
-		
-		if (plato.getAlimento(alimentoId)!=null)
-			throw new BadRequestException("El alimento con ID: " + alimentoId + " ya estÃ¡ presente en el alimento con ID: " + alimentoId);
-			
-		repository.addAlimento(platoId, alimentoId, cantidad);		
-
-		// para la respuesta.
-		UriBuilder ub = uriInfo.getAbsolutePathBuilder().path(this.getClass(), "getPlato");
-		URI uri = ub.build(platoId);
-		ResponseBuilder resp = Response.created(uri);
-		resp.entity(plato);			
-		return resp.build();
-	}
-	private void getPlatoPorCaracter(Collection<Plato> platos, String caracteres){
+	private Collection<Plato> getPlatoPorCaracter(Collection<Plato> platos, String caracteres){
 		/*Devuelve los platos que empiezan(X), terminan(-) o contienen un caracter especificado*/
 		
-		if(caracteres != null && !caracteres.isEmpty()) {
-			Predicate<Plato> condition;
-			if (caracteres.startsWith("X")) {
-				condition = x-> !x.getNombre().toLowerCase().startsWith(caracteres.substring(1).toLowerCase());
-			}
-			else if (caracteres.startsWith("-")) {
-				condition = x-> !x.getNombre().toLowerCase().endsWith(caracteres.substring(1).toLowerCase());
-			}
-			else {
-				condition = x-> !x.getNombre().toLowerCase().contains(caracteres.toLowerCase());
-			}
-			for(Plato plato: platos) {
-				if(condition.test(plato)) { 
-					platos.remove(plato);
-				}
-			}
+		if (caracteres.charAt(0)== 'X' ) {
+			platos = platos.stream().filter(x->x.getNombre().startsWith(caracteres.substring(1, caracteres.length()))).collect(Collectors.toList());
 		}
+		else if (caracteres.charAt(0)== '-' ) {
+			platos = platos.stream().filter(x->x.getNombre().endsWith(caracteres.substring(1, caracteres.length()))).collect(Collectors.toList());
+		}
+		else {
+			platos = platos.stream().filter(x->x.getNombre().contains(caracteres.substring(1, caracteres.length()))).collect(Collectors.toList());
+		}
+		
+		return platos;
 	}
 	
 	@GET
@@ -162,7 +120,7 @@ public class PlatoResource {
 			res = platos.stream().filter(p -> p.getTemporada().toString().toUpperCase().equals(temporada.toUpperCase())).collect(Collectors.toList());
 			
 		} else{
-			throw new BadRequestException("Temporada no válida");
+			throw new BadRequestException("Temporada no vï¿½lida");
 	    }
 		
 		return res;
@@ -192,7 +150,7 @@ public class PlatoResource {
 				flatMap(d -> d.getPlatos().stream()).collect(Collectors.toSet());
 			
 		} else{
-			throw new BadRequestException("Tipo de dieta no válida");
+			throw new BadRequestException("Tipo de dieta no vï¿½lida");
 	    }
 		
 		return res;
@@ -275,16 +233,16 @@ public class PlatoResource {
 	@Produces("application/json")
 	public Response addPlato(@Context UriInfo uriInfo, Plato plato) {	
 		if(plato.getNombre() == null || plato.getNombre().equals("")) throw new BadRequestException("El nombre del plato no puede ser nulo");
-		if(plato.getAlimentos() == null || plato.getAlimentos().isEmpty()) throw new BadRequestException("La lista de alimentos no puede ser nula o estar vacía");
-		if(plato.getCAOrigen() == null || plato.getCAOrigen().equals("")) throw new BadRequestException("La comunidad autónoma de origen del plato no puede ser nula");
+		if(plato.getAlimentos() == null || plato.getAlimentos().isEmpty()) throw new BadRequestException("La lista de alimentos no puede ser nula o estar vacï¿½a");
+		if(plato.getCAOrigen() == null || plato.getCAOrigen().equals("")) throw new BadRequestException("La comunidad autï¿½noma de origen del plato no puede ser nula");
 		
 		Collection<Temporada> temporadas = Arrays.asList(Temporada.values());
 		if(!temporadas.contains(plato.getTemporada())) {
-			throw new BadRequestException("Temporada no válida");
+			throw new BadRequestException("Temporada no vï¿½lida");
 		}
 		
 		repository.addPlato(plato);
-		UriBuilder ub = uriInfo.getAbsolutePathBuilder().path(this.getClass(), "get");
+		UriBuilder ub = uriInfo.getAbsolutePathBuilder().path(this.getClass(), "getPlato");
 		URI uri = ub.build(plato.getId());
 		ResponseBuilder respb = Response.created(uri);
 		respb.entity(plato);
