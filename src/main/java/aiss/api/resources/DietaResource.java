@@ -114,9 +114,11 @@ public class DietaResource {
 		if (dieta.getPlatos()==null)
 			throw new BadRequestException("Una dieta debe contener platos");
 		
-		Collection<TipoDieta> tiposDieta=Arrays.asList(TipoDieta.values());
-		if(!tiposDieta.contains(dieta.getTipo()))
-			throw new BadRequestException("Tipo de dieta no válido");
+		if(dieta.getTipo()!=null) {
+			Collection<TipoDieta> tiposDieta=Arrays.asList(TipoDieta.values());
+			if(!tiposDieta.contains(dieta.getTipo()))
+				throw new BadRequestException("Tipo de dieta no válido");
+		}		
 		
 		List<Plato> platos = dieta.getPlatos();
 		for(int i = 0; i < platos.size(); i++) {
@@ -131,7 +133,7 @@ public class DietaResource {
 		dieta.setPlatos(platos);
 		
 		repository.addDieta(dieta);
-
+		
 		// para la respuesta.
 		UriBuilder ub = uriInfo.getAbsolutePathBuilder().path(this.getClass(), "get");
 		URI uri = ub.build(dieta.getId());
