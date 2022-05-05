@@ -80,7 +80,7 @@ public class Dieta {
 			
 	public void deletePlato (String id) {
 		for (int i = 0; i < this.platos.size(); i++) {
-			if (this.platos.get(i).getId() == id.trim()) {
+			if (this.platos.get(i).getId().equals(id.trim())) {
 				this.platos.remove(i);
 				break;
 			}
@@ -94,7 +94,7 @@ public class Dieta {
 	public Plato getPlato(String id) {
 		Plato plato = null;
 		for (int i = 0; i < this.platos.size(); i++) {
-			if (this.platos.get(i).getId() == id.trim()) {
+			if (this.platos.get(i).getId().equals(id.trim())) {
 				plato = this.platos.get(i);
 				break;
 			}
