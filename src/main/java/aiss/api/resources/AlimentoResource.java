@@ -52,11 +52,21 @@ public class AlimentoResource {
 	@GET
 	@Produces("application/json")
 	public Collection<Alimento> getAll(@QueryParam("limit") Integer limit,
-			@QueryParam("offset") Integer offset, @QueryParam("s") String caracteres){
+			@QueryParam("offset") Integer offset, @QueryParam("s") String caracteres, 
+			@QueryParam("temporada") String temporada, @QueryParam("tipo") String tipo, @QueryParam("categoria") String categoria){
 		
 		Collection<Alimento> alimentos= this.repository.getAllAlimentos();
 		if(caracteres != null) {
 			alimentos= getAlimentoPorCaracter(caracteres, alimentos);
+		}
+		if(temporada != null) {
+			alimentos=getAlimentosPorTemporada(temporada, alimentos);
+		}
+		if(tipo != null) {
+			alimentos=getAlimentosPorTipo(tipo, alimentos);
+		}
+		if(categoria != null) {
+			alimentos=getAlimentosPorCategoria(categoria, alimentos);
 		}
 		//Para la paginacion
 		if( limit!=null || offset!=null ) {
@@ -105,6 +115,50 @@ public class AlimentoResource {
 		return alimentos;
 		
 	}
+	
+	private Collection<Alimento> getAlimentosPorTemporada(String temporada, Collection<Alimento> alimentos) {
+		
+		if(Arrays.asList(Temporada.values()).stream().map(v -> v.toString().toUpperCase()).
+				anyMatch(v -> v.equals(temporada.toUpperCase()))) {
+			
+			alimentos = alimentos.stream().filter(a -> a.getTemporada().toString().toUpperCase().equals(temporada.toUpperCase())).collect(Collectors.toList());
+			
+		} else{
+			throw new BadRequestException("Temporada no válida");
+	    }
+		
+		return alimentos;
+	}
+	
+	private Collection<Alimento> getAlimentosPorTipo(String tipo, Collection<Alimento> alimentos) {
+		
+		if(Arrays.asList(TipoAlimento.values()).stream().map(v -> v.toString().toUpperCase()).
+				anyMatch(v -> v.equals(tipo.toUpperCase()))) {
+			
+			alimentos = alimentos.stream().filter(a -> a.getTipo().toString().toUpperCase().equals(tipo.toUpperCase())).collect(Collectors.toList());
+			
+		} else{
+			throw new BadRequestException("Tipo de alimento no válido");
+	    }
+		
+		return alimentos;
+		
+	}
+	
+	private Collection<Alimento> getAlimentosPorCategoria(String categoria, Collection<Alimento> alimentos) {
+		
+		if(Arrays.asList(Categoria.values()).stream().map(v -> v.toString().toUpperCase()).
+				anyMatch(v -> v.equals(categoria.toUpperCase()))) {
+			
+			alimentos = alimentos.stream().filter(a -> a.getCategoria().toString().toUpperCase().equals(categoria.toUpperCase())).collect(Collectors.toList());
+			
+		} else{
+			throw new BadRequestException("Categoría no válida");
+	    }
+		
+		return alimentos;
+		
+	}
 
 	@GET
 	@Path("/tipos")
@@ -117,60 +171,6 @@ public class AlimentoResource {
 	@Produces("application/json")
 	public Collection<Alergeno> getListOfAler(){
 		return Arrays.asList(Alergeno.values());
-	}
-	
-	@GET
-	@Produces("application/json")
-	public Collection<Alimento> getAlimentosPorTemporada(@QueryParam("temporada") String temporada) {
-		Collection<Alimento> alimentos = this.repository.getAllAlimentos();
-		Collection<Alimento> res = new ArrayList<>();
-		
-		if(Arrays.asList(Temporada.values()).stream().map(v -> v.toString().toUpperCase()).
-				anyMatch(v -> v.equals(temporada.toUpperCase()))) {
-			
-			res = alimentos.stream().filter(a -> a.getTemporada().toString().toUpperCase().equals(temporada.toUpperCase())).collect(Collectors.toList());
-			
-		} else{
-			throw new BadRequestException("Temporada no v�lida");
-	    }
-		
-		return res;
-	}
-	
-	@GET
-	@Produces("application/json")
-	public Collection<Alimento> getAlimentosPorTipo(@QueryParam("tipo") String tipo) {
-		Collection<Alimento> alimentos = this.repository.getAllAlimentos();
-		Collection<Alimento> res= new ArrayList<>();
-		
-		if(Arrays.asList(TipoAlimento.values()).stream().map(v -> v.toString().toUpperCase()).
-				anyMatch(v -> v.equals(tipo.toUpperCase()))) {
-			
-			res = alimentos.stream().filter(a -> a.getTipo().toString().toUpperCase().equals(tipo.toUpperCase())).collect(Collectors.toList());
-			
-		} else{
-			throw new BadRequestException("Tipo de alimento no v�lido");
-	    }
-		
-		return res;
-	}
-	
-	@GET
-	@Produces("application/json")
-	public Collection<Alimento> getAlimentosPorCategoria(@QueryParam("categoria") String categoria) {
-		Collection<Alimento> alimentos = this.repository.getAllAlimentos();
-		Collection<Alimento> res= new ArrayList<>();
-		
-		if(Arrays.asList(Categoria.values()).stream().map(v -> v.toString().toUpperCase()).
-				anyMatch(v -> v.equals(categoria.toUpperCase()))) {
-			
-			res = alimentos.stream().filter(a -> a.getCategoria().toString().toUpperCase().equals(categoria.toUpperCase())).collect(Collectors.toList());
-			
-		} else{
-			throw new BadRequestException("Categor�a no v�lida");
-	    }
-		
-		return res;
 	}
 	
 	@POST

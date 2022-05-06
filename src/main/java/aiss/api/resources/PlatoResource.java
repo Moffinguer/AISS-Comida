@@ -58,7 +58,8 @@ public class PlatoResource {
 	}
 	@GET
 	@Produces("application/json")
-	public Collection<Plato> getAll(@QueryParam("sortBy") String sort, @QueryParam("s") String caracteres){
+	public Collection<Plato> getAll(@QueryParam("sortBy") String sort, @QueryParam("s") String caracteres,  
+			@QueryParam("temporada") String temporada, @QueryParam("ca") String ca, @QueryParam("tipoDieta") String tipoDieta){
 		List<Comparator> options = new LinkedList<>();
 		if(sort != null) {
 			for(String param: Arrays.asList(sort.split(","))) {
@@ -71,6 +72,15 @@ public class PlatoResource {
 		Collection<Plato> res = new LinkedList<>(repository.getAllPlatos());
 		if(caracteres != null) {
 			res= getPlatoPorCaracter(res, caracteres);
+		}
+		if(temporada != null) {
+			res=getPlatosPorTemporada(temporada, res);
+		}
+		if(ca != null) {
+			res=getPlatosPorCA(ca, res);
+		}
+		if(tipoDieta != null) {
+			res=getPlatosPorTipoDieta(tipoDieta, res);
 		}
 		if(!options.isEmpty()) {
 			if(options.size() == 1) {
@@ -98,6 +108,44 @@ public class PlatoResource {
 		return platos;
 	}
 	
+	private Collection<Plato> getPlatosPorTemporada(String temporada, Collection<Plato> platos) {
+		
+		if(Arrays.asList(Temporada.values()).stream().map(v -> v.toString().toUpperCase()).
+				anyMatch(v -> v.equals(temporada.toUpperCase()))) {
+			
+			platos = platos.stream().filter(p -> p.getTemporada().toString().toUpperCase().equals(temporada.toUpperCase())).collect(Collectors.toList());
+			
+		} else{
+			throw new BadRequestException("Temporada no válida");
+	    }
+		
+		return platos;
+	}
+	
+	private Collection<Plato> getPlatosPorCA(String ca, Collection<Plato> platos) {
+		
+		platos = platos.stream().filter(p -> p.getCAOrigen().toUpperCase().equals(ca.toUpperCase())).collect(Collectors.toList());
+	
+	return platos;
+	
+    }
+	
+	private Collection<Plato> getPlatosPorTipoDieta(String tipoDieta, Collection<Plato> platos) {
+		
+		if(Arrays.asList(TipoDieta.values()).stream().map(v -> v.toString().toUpperCase()).
+				anyMatch(v -> v.equals(tipoDieta.toUpperCase()))) {
+			
+		    platos = repository.getAllDietas().stream().filter(d -> d.getTipo().toString().toUpperCase().equals(tipoDieta.toUpperCase())).
+				flatMap(d -> d.getPlatos().stream()).collect(Collectors.toSet());
+			
+		} else{
+			throw new BadRequestException("Tipo de dieta no válida");
+	    }
+		
+		return platos;
+	}
+
+	
 	@GET
 	@Path("/{id}")
 	@Produces("application/json")
@@ -106,54 +154,6 @@ public class PlatoResource {
 		Plato plato = repository.getPlato(platoId);
 		if(plato == null) throw new NotFoundException("el alimento con ID: " + platoId + " no existe");
 		return plato;
-	}
-	
-	@GET
-	@Produces("application/json")
-	public Collection<Plato> getPlatosPorTemporada(@QueryParam("temporada") String temporada) {
-		Collection<Plato> platos = this.repository.getAllPlatos();
-		Collection<Plato> res = new ArrayList<>();
-		
-		if(Arrays.asList(Temporada.values()).stream().map(v -> v.toString().toUpperCase()).
-				anyMatch(v -> v.equals(temporada.toUpperCase()))) {
-			
-			res = platos.stream().filter(p -> p.getTemporada().toString().toUpperCase().equals(temporada.toUpperCase())).collect(Collectors.toList());
-			
-		} else{
-			throw new BadRequestException("Temporada no v�lida");
-	    }
-		
-		return res;
-	}
-	
-	@GET
-	@Produces("application/json")
-	public Collection<Plato> getPlatosPorCA(@QueryParam("CAOrigen") String ca) {
-		Collection<Plato> platos = this.repository.getAllPlatos();
-		Collection<Plato> res = new ArrayList<>();
-			
-			res = platos.stream().filter(p -> p.getCAOrigen().toUpperCase().equals(ca.toUpperCase())).collect(Collectors.toList());
-		
-		return res;
-	}
-	
-	@GET
-	@Produces("application/json")
-	public Collection<Plato> getPlatosPorTipoDieta(@QueryParam("tipoDieta") String tipoDieta) {
-		Collection<Plato> platos = this.repository.getAllPlatos();
-		Collection<Plato> res = new ArrayList<>();
-		
-		if(Arrays.asList(TipoDieta.values()).stream().map(v -> v.toString().toUpperCase()).
-				anyMatch(v -> v.equals(tipoDieta.toUpperCase()))) {
-			
-		    res = repository.getAllDietas().stream().filter(d -> d.getTipo().toString().toUpperCase().equals(tipoDieta.toUpperCase())).
-				flatMap(d -> d.getPlatos().stream()).collect(Collectors.toSet());
-			
-		} else{
-			throw new BadRequestException("Tipo de dieta no v�lida");
-	    }
-		
-		return res;
 	}
 	
 	@PUT
@@ -233,12 +233,29 @@ public class PlatoResource {
 	@Produces("application/json")
 	public Response addPlato(@Context UriInfo uriInfo, Plato plato) {	
 		if(plato.getNombre() == null || plato.getNombre().equals("")) throw new BadRequestException("El nombre del plato no puede ser nulo");
-		if(plato.getAlimentos() == null || plato.getAlimentos().isEmpty()) throw new BadRequestException("La lista de alimentos no puede ser nula o estar vac�a");
-		if(plato.getCAOrigen() == null || plato.getCAOrigen().equals("")) throw new BadRequestException("La comunidad aut�noma de origen del plato no puede ser nula");
+		if(plato.getAlimentos() == null || plato.getAlimentos().isEmpty()) throw new BadRequestException("La lista de alimentos no puede ser nula o estar vacía");
+		if(plato.getCAOrigen() == null || plato.getCAOrigen().equals("")) throw new BadRequestException("La comunidad autónoma de origen del plato no puede ser nula");
+		
+		List<Ingrediente> alimentos = plato.getAlimentos();
+		for(int i=0; i<alimentos.size(); i++) {
+			Alimento alimentoPlato = plato.getAlimentos().get(i).getAlimento();
+			Alimento alimentoRepo = repository.getAlimento(alimentoPlato.getId());
+			if( alimentoRepo == null ||
+			   !alimentoRepo.getNombre().equals(alimentoPlato.getNombre()) ||
+			   !alimentoRepo.getCalorias().equals(alimentoPlato.getCalorias()) ||
+			   !alimentoRepo.getCategoria().equals(alimentoPlato.getCategoria()) ||
+			   !alimentoRepo.getTipo().equals(alimentoPlato.getTipo()) ||
+			   !alimentoRepo.getAlergeno().equals(alimentoPlato.getAlergeno()) ||
+			   !alimentoRepo.getTemporada().equals(alimentoPlato.getTemporada()))
+			{
+					throw new BadRequestException("El alimento con ID: " + alimentoPlato.getId() + " no existe");
+				
+			}
+		}
 		
 		Collection<Temporada> temporadas = Arrays.asList(Temporada.values());
-		if(!temporadas.contains(plato.getTemporada())) {
-			throw new BadRequestException("Temporada no v�lida");
+		if(plato.getTemporada()!=null && !temporadas.contains(plato.getTemporada())) {
+			throw new BadRequestException("Temporada no válida");
 		}
 		
 		repository.addPlato(plato);
