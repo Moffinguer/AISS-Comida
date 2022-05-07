@@ -22,7 +22,9 @@ public class MapDietaRepository implements DietaRepository{
 	Map<String, Plato> platoMap = new HashMap<String, Plato>();
 	Map<String, Dieta> dietaMap = new HashMap<String, Dieta>();
 	private static MapDietaRepository instance=null;
-	private int index=0;
+	private int indexAl=0;
+	private int indexPl=0;
+	private int indexDi=0;
 	
 	public static MapDietaRepository getInstance() {
 		
@@ -115,8 +117,8 @@ public class MapDietaRepository implements DietaRepository{
 
 	@Override
 	public void addAlimento(Alimento a) {
-		a.setId((index)+"al");
-		alimentoMap.put((index++)+"al", a);
+		a.setId((indexAl)+"al");
+		alimentoMap.put((indexAl++)+"al", a);
 	}
 
 	@Override
@@ -145,8 +147,8 @@ public class MapDietaRepository implements DietaRepository{
 
 	@Override
 	public void addPlato(Plato p) {
-		p.setId((index)+"pl");
-		platoMap.put((index++)+"pl", p);
+		p.setId((indexPl)+"pl");
+		platoMap.put((indexPl++)+"pl", p);
 		
 	}
 
@@ -177,8 +179,8 @@ public class MapDietaRepository implements DietaRepository{
 
 	@Override
 	public void addDieta(Dieta d) {
-		d.setId(index+"di");
-		dietaMap.put((index++)+"di", d);
+		d.setId(indexDi+"di");
+		dietaMap.put((indexDi++)+"di", d);
 		
 	}
 

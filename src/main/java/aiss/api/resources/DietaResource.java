@@ -25,6 +25,10 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.jboss.resteasy.spi.BadRequestException;
 import org.jboss.resteasy.spi.NotFoundException;
 
+import aiss.api.resources.methods.DietaMethodsGet;
+import aiss.api.resources.methods.DietaMethodsPost;
+import aiss.api.resources.methods.DietaMethodsPut;
+import aiss.api.resources.methods.ResponsePost;
 import aiss.model.Alimento;
 import aiss.model.Dieta;
 import aiss.model.Plato;
@@ -58,14 +62,7 @@ public class DietaResource {
 		Collection<Dieta> dietas=repository.getAllDietas();
 		
 		if(tipo != null) {
-			if(Arrays.asList(TipoAlimento.values())
-					.stream().map(v -> v.toString().toUpperCase())
-					.anyMatch(v -> v.equals(tipo.toUpperCase()))) {
-				throw new BadRequestException("Tipo de alimento no válido");
-			}
-			
-			dietas = dietas.stream().filter(d -> d.getTipo().toString().equals(tipo))
-					.collect(Collectors.toList());
+			dietas = DietaMethodsGet.checkTipoIsValid(tipo, dietas);
 		}
 		
 		return dietas;
@@ -74,119 +71,34 @@ public class DietaResource {
 	@GET
 	@Path("/{id}")
 	@Produces("application/json")
-	public Dieta get(@PathParam("id") String dietaId, @QueryParam("fields") String fields)
+	public Dieta getDieta(@PathParam("id") String dietaId, @QueryParam("fields") String fields)
 	{
 		Dieta dieta = repository.getDieta(dietaId);
 		if(dieta == null) throw new NotFoundException("la dieta con ID: " + dietaId + " no existe");
-		Dieta res = selectDietaFields(dietaId, fields, dieta);
+		Dieta res = DietaMethodsGet.selectDietaFields(dietaId, fields, dieta);
 		return res;
 	}
-	private Dieta selectDietaFields(String id, String fields, Dieta dieta){
-		Dieta resDieta = null;
-		if(fields != null) {
-		try {
-			resDieta = new Dieta();
-			for(String field :  fields.split(",")) {
-				if(!field.equalsIgnoreCase("tipo") && !field.equalsIgnoreCase("platos")){
-					throw new NotFoundException("Solo puede obtener los platos y los tipo");
-				}
-				if(field.equalsIgnoreCase("tipo")) {
-					resDieta.setTipo(dieta.getTipo());
-				}
-				if(field.equalsIgnoreCase("platos")){
-					resDieta.setPlatos(dieta.getPlatos());
-				}
-			}
-			return resDieta;
-		}catch(NullPointerException npe) {
-			throw new NotFoundException("No existe una dieta con ID: " + id);
-		}
-		}
-		return dieta;
-	}
+	
 	@POST
 	@Consumes("application/json")
 	@Produces("application/json")
 	public Response addDieta(@Context UriInfo uriInfo, Dieta dieta) {
-		if (dieta.getNombre() == null || "".equals(dieta.getNombre()))
-			throw new BadRequestException("El nombre de la dieta no debe ser nulo");
 		
-		if (dieta.getPlatos()==null)
-			throw new BadRequestException("Una dieta debe contener platos");
-		
-		if(dieta.getTipo()!=null) {
-			Collection<TipoDieta> tiposDieta=Arrays.asList(TipoDieta.values());
-			if(!tiposDieta.contains(dieta.getTipo()))
-				throw new BadRequestException("Tipo de dieta no válido");
-		}		
-		
-		List<Plato> platos = dieta.getPlatos();
-		for(int i = 0; i < platos.size(); i++) {
-			Plato platoBody = dieta.getPlatos().get(i);
-			Plato platoRepo = repository.getPlato(platoBody.getId());
-			if(platoRepo == null) {
-				throw new BadRequestException("El plato con ID: " + platoBody.getId() + " no existe");
-			} else {
-				platos.set(i, platoRepo);
-			}
-		}
-		dieta.setPlatos(platos);
+		DietaMethodsPost.checkDietaIsValid(dieta, repository);
 		
 		repository.addDieta(dieta);
 		
-		// para la respuesta.
-		UriBuilder ub = uriInfo.getAbsolutePathBuilder().path(this.getClass(), "get");
-		URI uri = ub.build(dieta.getId());
-		ResponseBuilder resp = Response.created(uri);
-		resp.entity(dieta);
-		return resp.build();
+		return ResponsePost.getResponseDieta(uriInfo, dieta, "getDieta", repository, this);
 	}
 	
 	@PUT 
 	@Consumes("application/json")
 	public Response updateDieta(Dieta nuevaDieta) {
-		if(nuevaDieta == null) {
-			throw new BadRequestException("No se ha enviado ninguna modificación");
-		}
-		if(nuevaDieta.getId() == null)
-			throw new BadRequestException("No existe ningún id en la consulta" );
-		Dieta actualDieta = repository.getDieta(nuevaDieta.getId());
-		if (actualDieta == null){
-			throw new BadRequestException("El Id " + nuevaDieta.getId() + " no corresponde a ninguna dieta" );
-		}
-		/*Comprobación de que la Id de los platos introducidos existen: */
-		if(nuevaDieta.getPlatos() != null) {
-			List<Plato> platos = new LinkedList<>();
-			for (Plato plato : nuevaDieta.getPlatos()) {
-				Plato platoTemp = repository.getPlato(plato.getId());
-				if (platoTemp == null){
-					throw new BadRequestException("Ha introducido un plato que no existe: " + plato.getId() );
-				}
-				platos.add(platoTemp);
-			}
-			if(platos.isEmpty()) {
-				throw new BadRequestException("No ha introducido ningún plato");
-			}
-			actualDieta.setPlatos(platos);
-			}
-		if(nuevaDieta.getDescripcion() != null)
-			actualDieta.setDescripcion(nuevaDieta.getDescripcion());
+		
+		Dieta actualDieta= DietaMethodsPut.getDietaModified(nuevaDieta, repository);
+		DietaMethodsPut.setPlatosToDieta(nuevaDieta, repository, actualDieta);
+		
 		repository.updateDieta(actualDieta);
-		return Response.noContent().build();
-	}
-	
-	
-	
-	
-	
-	@DELETE
-	@Path("/{id}")
-	public Response removeDieta(@PathParam("id") String id) {
-		Dieta dieta=repository.getDieta(id);
-		if (dieta == null)
-			throw new NotFoundException("La dieta con ID: " + id + " no existe");
-		else
-			repository.deleteDieta(id);
 		
 		return Response.noContent().build();
 	}
@@ -211,14 +123,20 @@ public class DietaResource {
 			
 		repository.addPlato(dietaId, platoId);		
 
-		// para la respuesta.
-		UriBuilder ub = uriInfo.getAbsolutePathBuilder().path(this.getClass(), "get");
-		URI uri = ub.build(dietaId);
-		ResponseBuilder resp = Response.created(uri);
-		resp.entity(dieta);			
-		return resp.build();
+		return ResponsePost.getResponseDieta(uriInfo, dieta, "getDieta", repository, this);
 	}
 	
+	@DELETE
+	@Path("/{id}")
+	public Response removeDieta(@PathParam("id") String id) {
+		Dieta dieta=repository.getDieta(id);
+		if (dieta == null)
+			throw new NotFoundException("La dieta con ID: " + id + " no existe");
+		else
+			repository.deleteDieta(id);
+		
+		return Response.noContent().build();
+	}
 	
 	@DELETE
 	@Path("/{dietaId}/{platoId}")
