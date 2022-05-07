@@ -13,46 +13,49 @@ import aiss.model.repository.DietaRepository;
 public class PlatoMethodsPut {
 
 	public static Plato getPlatoModified(Plato nuevoPlato, DietaRepository repository) {
-		if(nuevoPlato == null) {
-			throw new BadRequestException("No se ha enviado ninguna modificación");
+		Plato actualPlato = null;
+		try {
+			actualPlato = repository.getPlato(nuevoPlato.getId());
+			if (actualPlato == null) {
+				throw new BadRequestException(
+						"No podemos identificar el plato, no existe un plato con ID " + nuevoPlato.getId());
+			}
+		} catch (Exception e) {
+			if (nuevoPlato == null) {
+				throw new BadRequestException("No se ha enviado ninguna modificación");
+			}
+			if (nuevoPlato.getId() == null || nuevoPlato.getId().isEmpty()) {
+				throw new BadRequestException("No podemos identificar el plato, no existe un ID");
+			}
 		}
-		if(nuevoPlato.getId() == null || nuevoPlato.getId().isEmpty()) {
-			throw new BadRequestException("No podemos identificar el plato, no existe un ID");
-		}
-		Plato actualPlato = repository.getPlato(nuevoPlato.getId());
-		if(actualPlato == null)
-			throw new BadRequestException("No podemos identificar el plato, no existe un plato con ID " + nuevoPlato.getId());
-		
+
 		return actualPlato;
 	}
-	
-	public static void setIngredientesOfPlato(Plato nuevoPlato, Plato actualPlato,
-			DietaRepository repository) {
-		if(nuevoPlato.getAlimentos() != null) {
+
+	public static void setIngredientesOfPlato(Plato nuevoPlato, Plato actualPlato, DietaRepository repository) {
+		try {
 			List<Ingrediente> ingredientes = new LinkedList<>();
-			try {
-				AddIngredients(nuevoPlato, ingredientes, repository);
-			}catch(NullPointerException npe) {
-				throw new BadRequestException("No ha introducido ningún ingrediente");
-			}
+			AddIngredients(nuevoPlato, ingredientes, repository);
 			actualPlato.setAlimentos(ingredientes);
+			repository.updatePlato(actualPlato);
+		} catch (NullPointerException npe) {
+			throw new BadRequestException("No ha introducido ningún ingrediente");
 		}
-		repository.updatePlato(actualPlato);
 	}
-	
-	public static void AddIngredients(Plato nuevoPlato, List<Ingrediente> ingredientes,
-			DietaRepository repository) {
-		for(Ingrediente ingrediente : nuevoPlato.getAlimentos()) {
+
+	public static void AddIngredients(Plato nuevoPlato, List<Ingrediente> ingredientes, DietaRepository repository)
+			throws NullPointerException {
+		for (Ingrediente ingrediente : nuevoPlato.getAlimentos()) {
 			String ingredienteId = ingrediente.getAlimento().getId();
-			if(ingredienteId == null) {
+			if (ingredienteId == null) {
 				throw new BadRequestException("No ha introducido IDs para los ingredientes");
 			}
 			Alimento alimento = repository.getAlimento(ingrediente.getAlimento().getId());
 			Double cantidad = ingrediente.getCantidad();
-			if(alimento == null) {
+			if (alimento == null) {
 				throw new BadRequestException("No existe un alimento con ID: " + ingredienteId);
 			}
-			if(cantidad == null) {
+			if (cantidad == null) {
 				throw new BadRequestException("No ha indicado cuantas calorias tiene el ingrediente " + ingredienteId);
 			}
 			ingredientes.add(new Ingrediente(alimento, cantidad));

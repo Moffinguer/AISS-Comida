@@ -12,41 +12,46 @@ import aiss.model.repository.DietaRepository;
 public class PlatoMethodsPost {
 
 	public static void checkPlatoIsValid(Plato plato, DietaRepository repository) {
-		if(plato.getNombre() == null || plato.getNombre().equals("")) throw new BadRequestException("El nombre del plato no puede ser nulo");
-		if(plato.getAlimentos() == null || plato.getAlimentos().isEmpty()) throw new BadRequestException("La lista de alimentos no puede ser nula o estar vacía");
-		if(plato.getCAOrigen() == null || plato.getCAOrigen().equals("")) throw new BadRequestException("La comunidad autónoma de origen del plato no puede ser nula");
-		
+		if (plato.getNombre() == null || plato.getNombre().isEmpty())
+			throw new BadRequestException("El nombre del plato no puede ser nulo");
+		if (plato.getAlimentos() == null || plato.getAlimentos().isEmpty())
+			throw new BadRequestException("La lista de alimentos no puede ser nula o estar vacía");
+		if (plato.getCAOrigen() == null || plato.getCAOrigen().isEmpty())
+			throw new BadRequestException("La comunidad autónoma de origen del plato no puede ser nula");
+
 		checkIngredientesAreValid(plato, repository);
 	}
 
 	private static void checkIngredientesAreValid(Plato plato, DietaRepository repository) {
 		List<Ingrediente> alimentos = plato.getAlimentos();
-		for(int i=0; i<alimentos.size(); i++) {
-			Alimento alimentoPlato = plato.getAlimentos().get(i).getAlimento();
+		for (int i = 0; i < alimentos.size(); i++) {
+			Alimento alimentoPlato = alimentos.get(i).getAlimento();
 			Alimento alimentoRepo = repository.getAlimento(alimentoPlato.getId());
-			if( alimentoRepo == null ||
-			   !alimentoRepo.getNombre().equals(alimentoPlato.getNombre()) ||
-			   !alimentoRepo.getCalorias().equals(alimentoPlato.getCalorias()) ||
-			   !alimentoRepo.getCategoria().equals(alimentoPlato.getCategoria()) ||
-			   !alimentoRepo.getTipo().equals(alimentoPlato.getTipo()) ||
-			   !alimentoRepo.getAlergeno().equals(alimentoPlato.getAlergeno()) ||
-			   !alimentoRepo.getTemporada().equals(alimentoPlato.getTemporada()))
-			{
-					throw new BadRequestException("El alimento con ID: " + alimentoPlato.getId() + " no existe");
-				
+			if (checkAlimento(alimentoPlato, alimentoRepo)) {
+				throw new BadRequestException("El alimento con ID: " + alimentoPlato.getId() + " no existe");
+
 			}
 		}
 	}
-	
+
+	private static boolean checkAlimento(Alimento alimentoPlato, Alimento alimentoRepo) {
+		return alimentoRepo == null || !alimentoRepo.getNombre().equals(alimentoPlato.getNombre())
+				|| !alimentoRepo.getCalorias().equals(alimentoPlato.getCalorias())
+				|| !alimentoRepo.getCategoria().equals(alimentoPlato.getCategoria())
+				|| !alimentoRepo.getTipo().equals(alimentoPlato.getTipo())
+				|| !alimentoRepo.getAlergeno().equals(alimentoPlato.getAlergeno())
+				|| !alimentoRepo.getTemporada().equals(alimentoPlato.getTemporada());
+	}
+
 	public static void checkCantidadIsValid(String cantidad) {
-		if(cantidad == null) {
+		if (cantidad == null) {
 			throw new BadRequestException("La cantidad no puede ser nula");
 		}
 		try {
 			Double.parseDouble(cantidad);
-		} catch(NumberFormatException e){
+		} catch (NumberFormatException e) {
 			throw new BadRequestException("La cantidad debe ser un número");
-	    }
+		}
 	}
-	
+
 }
