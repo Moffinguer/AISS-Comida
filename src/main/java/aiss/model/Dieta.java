@@ -12,7 +12,7 @@ public class Dieta {
 	//ATRIBUTOS
 	private String id;
 	private String nombre;
-	private String descripcion; //opcional
+	private String descripcion; 
 	private List<Plato> platos;
 	private TipoDieta tipo;
 	

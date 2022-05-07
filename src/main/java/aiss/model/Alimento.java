@@ -13,7 +13,7 @@ public class Alimento {
 	private Categoria categoria;
 	private TipoAlimento tipo;
 	private Alergeno alergeno; 
-	private Temporada temporada; //opcional
+	private Temporada temporada; 
 	
 	//CONSTRUCTORES
 	public Alimento () {}

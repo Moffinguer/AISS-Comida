@@ -17,11 +17,11 @@ public class Plato {
 		private String id;
 		private String nombre;
 		private List<Ingrediente> alimentos;
-		private Set<Alergeno> listaAlergenos; //derivada
-		private Double calorias; //derivada
-		private String provinciaOrigen; //opcional
+		private Set<Alergeno> listaAlergenos; 
+		private Double calorias; 
+		private String provinciaOrigen; 
 		private String CAOrigen; 
-		private Temporada temporada; //opcional
+		private Temporada temporada; 
 		
 		//CONSTRUCTORES
 		public Plato () {}

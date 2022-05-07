@@ -8,14 +8,12 @@ import aiss.model.Plato;
 
 public interface DietaRepository {
 
-		// Alimentos
 		public void addAlimento(Alimento a);
 		public Collection<Alimento> getAllAlimentos();
 		public Alimento getAlimento(String alimentoId);
 		public void updateAlimento(Alimento a);
 		public void deleteAlimento(String alimentoId);
 		
-		// Platos
 		public void addPlato(Plato p);
 		public Collection<Plato> getAllPlatos();
 		public Plato getPlato(String platoId);
@@ -24,7 +22,6 @@ public interface DietaRepository {
 		public void addAlimento(String platoId, String alimentoId, String cantidad);
 		public void deleteAlimento(String platoId, String alimentoId);
 		
-		//Dietas
 		public void addDieta(Dieta d);
 		public Collection<Dieta> getAllDietas();
 		public Dieta getDieta(String dietaId);
