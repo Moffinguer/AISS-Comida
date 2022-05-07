@@ -1,15 +1,8 @@
 package aiss.api.resources.methods;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.jboss.resteasy.spi.BadRequestException;
 
-import aiss.model.Alergeno;
 import aiss.model.Alimento;
-import aiss.model.Categoria;
-import aiss.model.Temporada;
-import aiss.model.TipoAlimento;
 
 public class AlimentoMethodsPost {
 

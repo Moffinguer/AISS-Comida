@@ -1,12 +1,6 @@
 package aiss.api.resources;
 
-import java.net.URI;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -18,10 +12,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.core.Response.ResponseBuilder;
-
 import org.jboss.resteasy.spi.BadRequestException;
 import org.jboss.resteasy.spi.NotFoundException;
 
@@ -29,11 +20,8 @@ import aiss.api.resources.methods.DietaMethodsGet;
 import aiss.api.resources.methods.DietaMethodsPost;
 import aiss.api.resources.methods.DietaMethodsPut;
 import aiss.api.resources.methods.ResponsePost;
-import aiss.model.Alimento;
 import aiss.model.Dieta;
 import aiss.model.Plato;
-import aiss.model.TipoAlimento;
-import aiss.model.TipoDieta;
 import aiss.model.repository.DietaRepository;
 import aiss.model.repository.MapDietaRepository;
 

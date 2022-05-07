@@ -8,8 +8,6 @@ import java.util.stream.Collectors;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 @JsonSerialize(include = Inclusion.NON_NULL)
 public class Plato {
 		

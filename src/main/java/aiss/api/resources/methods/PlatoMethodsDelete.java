@@ -2,7 +2,6 @@ package aiss.api.resources.methods;
 
 import org.jboss.resteasy.spi.BadRequestException;
 
-import aiss.model.Alimento;
 import aiss.model.Dieta;
 import aiss.model.Plato;
 import aiss.model.repository.DietaRepository;
