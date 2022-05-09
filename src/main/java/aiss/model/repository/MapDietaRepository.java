@@ -123,119 +123,98 @@ public class MapDietaRepository implements DietaRepository{
 
 	@Override
 	public Collection<Alimento> getAllAlimentos() {
-		// TODO Auto-generated method stub
 		return alimentoMap.values();
 	}
 
 	@Override
 	public Alimento getAlimento(String alimentoId) {
-		// TODO Auto-generated method stub
 		return alimentoMap.get(alimentoId);
 	}
 
 	@Override
 	public void updateAlimento(Alimento a) {
-		// TODO Auto-generated method stub
 		alimentoMap.put(a.getId(), a);
 	}
 
 	@Override
 	public void deleteAlimento(String alimentoId) {
 		alimentoMap.remove(alimentoId);
-		
 	}
 
 	@Override
 	public void addPlato(Plato p) {
 		p.setId((indexPl)+"pl");
 		platoMap.put((indexPl++)+"pl", p);
-		
 	}
 
 	@Override
 	public Collection<Plato> getAllPlatos() {
-		// TODO Auto-generated method stub
 		return this.platoMap.values();
 	}
 
 	@Override
 	public Plato getPlato(String platoId) {
-		// TODO Auto-generated method stub
 		return this.platoMap.get(platoId);
 	}
 
 	@Override
 	public void updatePlato(Plato p) {
 		this.platoMap.put(p.getId(), p);
-		
 	}
 
 	@Override
 	public void deletePlato(String platoId) {
-		// TODO Auto-generated method stub
 		this.platoMap.remove(platoId);
-		
 	}
 
 	@Override
 	public void addDieta(Dieta d) {
 		d.setId(indexDi+"di");
 		dietaMap.put((indexDi++)+"di", d);
-		
 	}
 
 	@Override
 	public Collection<Dieta> getAllDietas() {
-		// TODO Auto-generated method stub
 		return dietaMap.values();
 	}
 
 	@Override
 	public Dieta getDieta(String dietaId) {
-		// TODO Auto-generated method stub
 		return dietaMap.get(dietaId);
 	}
 
 	@Override
 	public void updateDieta(Dieta d) {
 		dietaMap.put(d.getId(), d);
-		
 	}
 
 	@Override
 	public void deleteDieta(String dietaId) {
 		dietaMap.remove(dietaId);
-		
 	}
 	
-	//para añadir alimentos a platos y platos a dietas
 	@Override
 	public void addAlimento(String platoId, String alimentoId, String cantidad) {
-		// TODO Auto-generated method stub
 		Plato plato= getPlato(platoId);
 		plato.addAlimento(alimentoMap.get(alimentoId), Double.parseDouble(cantidad));
 	}
 
 	@Override
 	public void deleteAlimento(String platoId, String alimentoId) {
-		// TODO Auto-generated method stub
 		Plato plato= getPlato(platoId);
 		plato.deleteAlimento(alimentoId);
 	}
 
 	@Override
 	public void addPlato(String dietaId, String platoId) {
-		// TODO Auto-generated method stub
 		Dieta dieta= getDieta(dietaId);
 		dieta.addPlato(platoMap.get(platoId));
 	}
 
 	@Override
 	public void deletePlato(String dietaId, String platoId) {
-		// TODO Auto-generated method stub
 		Dieta dieta= getDieta(dietaId);
 		dieta.deletePlato(platoId);
-		
 	}
 
 }

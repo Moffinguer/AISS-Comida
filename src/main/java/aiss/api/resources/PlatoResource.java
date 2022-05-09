@@ -1,16 +1,8 @@
 package aiss.api.resources;
 
-import java.net.URI;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -22,10 +14,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.core.Response.ResponseBuilder;
-
 import org.jboss.resteasy.spi.BadRequestException;
 import org.jboss.resteasy.spi.NotFoundException;
 
@@ -34,13 +23,8 @@ import aiss.api.resources.methods.PlatoMethodsGet;
 import aiss.api.resources.methods.PlatoMethodsPost;
 import aiss.api.resources.methods.PlatoMethodsPut;
 import aiss.api.resources.methods.ResponsePost;
-import aiss.model.Alergeno;
 import aiss.model.Alimento;
-import aiss.model.Dieta;
-import aiss.model.Ingrediente;
 import aiss.model.Plato;
-import aiss.model.Temporada;
-import aiss.model.TipoDieta;
 import aiss.model.repository.DietaRepository;
 import aiss.model.repository.MapDietaRepository;
 

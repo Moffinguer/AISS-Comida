@@ -2,20 +2,19 @@ package aiss.model;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+import org.jboss.resteasy.spi.BadRequestException;
 
 @JsonSerialize(include = Inclusion.NON_NULL)
 public class Alimento {
 	
-	//ATRIBUTOS
 	private String id;
 	private String nombre;
 	private Double calorias;
 	private Categoria categoria;
 	private TipoAlimento tipo;
 	private Alergeno alergeno; 
-	private Temporada temporada; //opcional
+	private Temporada temporada; 
 	
-	//CONSTRUCTORES
 	public Alimento () {}
 	
 	public Alimento (String nombre) {
@@ -23,6 +22,7 @@ public class Alimento {
 	}
 	public Alimento(String nombre, Double calorias, Categoria categoria, TipoAlimento tipo,
 			Alergeno alergeno, Temporada temporada) {
+		if(calorias.compareTo(0.) <= 0) throw new BadRequestException("El alimento " + nombre + "posee calorías negativas");
 		this.nombre = nombre;
 		this.calorias = calorias;
 		this.categoria = categoria;
@@ -30,8 +30,7 @@ public class Alimento {
 		this.alergeno = alergeno;
 		this.temporada = temporada;
 	}
-
-	//GETTERS Y SETTERS
+	
 	public String getId() {
 		return this.id;
 	}
@@ -53,6 +52,7 @@ public class Alimento {
 	}
 
 	public void setCalorias(Double calorias) {
+		if(calorias.compareTo(0.) <= 0) throw new BadRequestException("El alimento " + nombre + "posee calorías negativas");
 		this.calorias = calorias;
 	}
 
