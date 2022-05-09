@@ -11,7 +11,7 @@ public class AlimentoMethodsDelete {
 	public static void checkAlimentoNoPerteneceAPlato(Alimento alimento, DietaRepository repository) {
 		for (Plato plato : repository.getAllPlatos()) {
 			if (plato.getAlimentos().stream().anyMatch(x -> x.getAlimento().equals(alimento))) {
-				throw new BadRequestException("No puede eliminar el alimenta, ya que pertenece a algún plato");
+				throw new BadRequestException("No puede eliminar el alimento, ya que pertenece a algún plato");
 			}
 		}
 	}

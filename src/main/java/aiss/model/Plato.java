@@ -8,22 +8,18 @@ import java.util.stream.Collectors;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 @JsonSerialize(include = Inclusion.NON_NULL)
 public class Plato {
 		
-		//ATRIBUTOS
 		private String id;
 		private String nombre;
 		private List<Ingrediente> alimentos;
-		private Set<Alergeno> listaAlergenos; //derivada
-		private Double calorias; //derivada
-		private String provinciaOrigen; //opcional
+		private Set<Alergeno> listaAlergenos; 
+		private Double calorias; 
+		private String provinciaOrigen; 
 		private String CAOrigen; 
-		private Temporada temporada; //opcional
+		private Temporada temporada; 
 		
-		//CONSTRUCTORES
 		public Plato () {}
 		
 		public Plato (String nombre) {
@@ -110,7 +106,6 @@ public class Plato {
 			this.temporada = temporada;
 		}	
 		
-		//OTROS METODOS
 		public void addAlimento (Alimento alimento, Double gramos) {
 			if (this.alimentos == null) {
 				this.alimentos = new LinkedList<Ingrediente>();

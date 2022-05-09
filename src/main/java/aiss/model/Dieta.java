@@ -9,14 +9,12 @@ import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 @JsonSerialize(include = Inclusion.NON_NULL)
 public class Dieta {
 	
-	//ATRIBUTOS
 	private String id;
 	private String nombre;
-	private String descripcion; //opcional
+	private String descripcion; 
 	private List<Plato> platos;
 	private TipoDieta tipo;
 	
-	//CONSTRUCTORES
 	public Dieta () {}
 	
 	public Dieta (String nombre) {
@@ -68,7 +66,6 @@ public class Dieta {
 		this.tipo = tipo;
 	}
 	
-	//OTROS METODOS
 	public void addPlato (Plato plato) {
 		if (this.platos == null) {
 			this.platos = new ArrayList<Plato>();

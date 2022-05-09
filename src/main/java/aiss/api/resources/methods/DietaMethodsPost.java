@@ -14,28 +14,29 @@ import aiss.model.repository.DietaRepository;
 public class DietaMethodsPost {
 
 	public static void checkDietaIsValid(Dieta dieta, DietaRepository repository) {
-		if (dieta.getNombre() == null || "".equals(dieta.getNombre()))
+		if (dieta.getNombre() == null || dieta.getNombre().isEmpty())
 			throw new BadRequestException("El nombre de la dieta no debe ser nulo");
-		
-		if (dieta.getPlatos()==null)
+
+		if (dieta.getPlatos() == null)
 			throw new BadRequestException("Una dieta debe contener platos");
-		
-		if(dieta.getTipo()!=null) {
-			Collection<TipoDieta> tiposDieta=Arrays.asList(TipoDieta.values());
-			if(!tiposDieta.contains(dieta.getTipo()))
+
+		if (dieta.getTipo() != null) {
+			Collection<TipoDieta> tiposDieta = Arrays.asList(TipoDieta.values());
+			if (!tiposDieta.contains(dieta.getTipo())) {
 				throw new BadRequestException("Tipo de dieta no válido");
-		}		
-		
+			}
+		}
+
 		List<Plato> platos = checkPlatosAreValid(dieta, repository);
 		dieta.setPlatos(platos);
 	}
 
 	private static List<Plato> checkPlatosAreValid(Dieta dieta, DietaRepository repository) {
 		List<Plato> platos = dieta.getPlatos();
-		for(int i = 0; i < platos.size(); i++) {
+		for (int i = 0; i < platos.size(); i++) {
 			Plato platoBody = dieta.getPlatos().get(i);
 			Plato platoRepo = repository.getPlato(platoBody.getId());
-			if(platoRepo == null) {
+			if (platoRepo == null) {
 				throw new BadRequestException("El plato con ID: " + platoBody.getId() + " no existe");
 			} else {
 				platos.set(i, platoRepo);
@@ -43,6 +44,5 @@ public class DietaMethodsPost {
 		}
 		return platos;
 	}
-	
-	
+
 }

@@ -22,18 +22,18 @@ public class ResponsePost {
 		respb.entity(alimento);
 		return respb.build();
 	}
-	
-	public static <T> Response getResponsePlato(UriInfo uriInfo, Plato plato, String method,
-			DietaRepository repository, T clase) {
+
+	public static <T> Response getResponsePlato(UriInfo uriInfo, Plato plato, String method, DietaRepository repository,
+			T clase) {
 		UriBuilder ub = uriInfo.getAbsolutePathBuilder().path(clase.getClass(), method);
 		URI uri = ub.build(plato.getId());
 		ResponseBuilder respb = Response.created(uri);
 		respb.entity(plato);
 		return respb.build();
 	}
-	
-	public static <T> Response getResponseDieta(UriInfo uriInfo, Dieta dieta, String method,
-			DietaRepository repository, T clase) {
+
+	public static <T> Response getResponseDieta(UriInfo uriInfo, Dieta dieta, String method, DietaRepository repository,
+			T clase) {
 		UriBuilder ub = uriInfo.getAbsolutePathBuilder().path(clase.getClass(), method);
 		URI uri = ub.build(dieta.getId());
 		ResponseBuilder respb = Response.created(uri);
