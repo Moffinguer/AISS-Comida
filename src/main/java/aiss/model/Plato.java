@@ -11,7 +11,6 @@ import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 @JsonSerialize(include = Inclusion.NON_NULL)
 public class Plato {
 		
-		//ATRIBUTOS
 		private String id;
 		private String nombre;
 		private List<Ingrediente> alimentos;
@@ -21,7 +20,6 @@ public class Plato {
 		private String CAOrigen; 
 		private Temporada temporada; 
 		
-		//CONSTRUCTORES
 		public Plato () {}
 		
 		public Plato (String nombre) {
@@ -108,7 +106,6 @@ public class Plato {
 			this.temporada = temporada;
 		}	
 		
-		//OTROS METODOS
 		public void addAlimento (Alimento alimento, Double gramos) {
 			if (this.alimentos == null) {
 				this.alimentos = new LinkedList<Ingrediente>();

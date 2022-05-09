@@ -7,7 +7,6 @@ import org.jboss.resteasy.spi.BadRequestException;
 @JsonSerialize(include = Inclusion.NON_NULL)
 public class Alimento {
 	
-	//ATRIBUTOS
 	private String id;
 	private String nombre;
 	private Double calorias;
@@ -16,7 +15,6 @@ public class Alimento {
 	private Alergeno alergeno; 
 	private Temporada temporada; 
 	
-	//CONSTRUCTORES
 	public Alimento () {}
 	
 	public Alimento (String nombre) {
@@ -32,8 +30,7 @@ public class Alimento {
 		this.alergeno = alergeno;
 		this.temporada = temporada;
 	}
-
-	//GETTERS Y SETTERS
+	
 	public String getId() {
 		return this.id;
 	}
