@@ -13,7 +13,7 @@ info:
   title: AISS-Comida
 servers:
   - description: Desplegada
-    url: "google.com"
+    url: "https://aiss-343810.ew.r.appspot.com/api/v1/"
   - description: Testing
     url: 'http://localhost:8089/api/v1/'
 tags:
