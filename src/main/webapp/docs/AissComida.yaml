@@ -1,0 +1,941 @@
+openapi: 3.0.0
+info:
+  description: |
+    Servicio de recetas y dietas, proyecto de AISS-Comida <br>
+    Autores:
+    <ul>
+    <li>Alberca Bebia, Rocío
+    <li>Bermejo Soria, Carlos
+    <li>Gallardo Martos, Daniel
+    <li>Lopez Moyardo, Rocío
+    <li>Mateos Gómez, Fernando José
+  version: "1.1.5"
+  title: AISS-Comida
+servers:
+  - description: Desplegada
+    url: "google.com"
+  - description: Testing
+    url: 'http://localhost:8089/api/v1/'
+tags:
+  - name: alimentos
+    description: Información de los alimentos que hay en el sistema
+  - name: platos
+    description: Información de los platos que hay en el sistema
+  - name: dietas
+    description: Información de las dietas que hay en el sistema
+paths:
+  '/alimentos':
+    get:
+      tags:
+        - alimentos
+      summary: Get alimentos
+      description: Obtenemos un listado de los alimentos del sistema
+      operationId: getAlimentos
+      parameters:
+        - name: limit
+          in: query
+          description: Obtiene los n primeros alimentos. Debe de ser un número positivo mayor que cero
+          required: false
+          schema:
+           type: integer
+           format: int32
+           minimum: 0
+        - name: offset
+          in: query
+          description: Obtiene los alimentos a partir del n-esimo alimento marcado. Debe de ser un número positivo mayor que cero
+          required: false
+          schema:
+           type: integer
+           format: int32
+           minimum: 0
+        - name: s
+          in: query
+          description: Al introducir una cadena, buscará si el nombre del alimento contiene ese caracter. Añadiendo \"-\" buscará al final del nombre, y \"X\" buscará al principio del nombre, si coincide.
+          schema:
+            type: string
+            example: Xlec
+        - name: temporada
+          in: query
+          description: Devuelve los alimentos de la temporada especificada
+          required: false
+          schema:
+           type: string
+           example: VERANO
+        - name: tipo
+          in: query
+          description: Devuelve los alimentos del tipo especificado
+          required: false
+          schema:
+           type: string
+           example: GLUCIDOS
+        - name: categoria
+          in: query
+          description: Devuelve los alimentos de la categoria especificada
+          required: false
+          schema:
+           type: string
+           example: LACTEOS
+      responses:
+        '200':
+          description: Se ha obtenido el listado satisfactoriamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Alimento'
+              example:
+                - id: 0al
+                  nombre: Merluza
+                  calorias: 150.75
+                  categoria: PESCADO
+                  tipo: PROTEINAS
+                  alergeno: PESCADO
+                  temporada: VERANO
+                - id: 1al
+                  nombre: Chorizo
+                  calorias: 2000.03
+                  categoria: CARNE
+                  tipo: PROTEINAS
+                  alergeno: SOJA
+                  temporada: OTOÑO
+                - id: 2al
+                  nombre: Manzana
+                  calorias: 100.13
+                  categoria: FRUTAS
+                  tipo: SALESMINERALES
+                  alergeno: LECHE
+                  temporada: JULIO
+                - id: 3al
+                  nombre: Huevo
+                  calorias: 150.69
+                  categoria: HUEVOS
+                  tipo: PROTEINAS
+                  alergeno: HUEVOS
+                  temporada: PRIMAVERA
+                
+        '400':
+          description: Error con los argumentos.
+    post:
+      tags: 
+        - alimentos
+      summary: Add alimento
+      description: Creamos y añadimos un alimento al sistema. Sus calorías deben ser mayor que 0
+      operationId: addAlimento
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Alimento'
+            example: 
+              id: 0al
+              nombre: Ejemplo
+              calorias: 50.
+              categoria: LACTEOS
+              tipo: GLUCIDOS
+              alergeno: CEREALES
+              temporada: VERANO
+              description: Alimento para añadir
+              required: true
+      responses:
+        '201':
+          description: Alimento creado
+          content:
+            application/json:
+              schema:
+               $ref: '#/components/schemas/Alimento'
+              example: 
+                id: 0al
+                nombre: Ejemplo
+                calorias: 50.
+                categoria: LACTEOS
+                tipo: GLUCIDOS
+                alergeno: CEREALES
+                temporada: VERANO
+        '400':
+          description: Error al añadir el alimento
+  '/alimentos/{idAlimento}':
+    get:
+      tags: 
+         - alimentos
+      summary: Get alimento
+      description: Obtener un alimento
+      operationId: getAlimento
+      parameters: 
+        - name: idAlimento
+          in: path
+          description: Id del alimento
+          required: true
+          schema:
+           type: string
+      responses:
+        '200':
+          description: Alimento con el Id solicitado
+          content:
+            application/json:
+             schema:
+               $ref: '#/components/schemas/Alimento'
+             example: 
+              id: 0al
+              nombre: Ejemplo
+              calorias: 50.
+              categoria: LACTEOS
+              tipo: GLUCIDOS
+              alergeno: CEREALES
+              temporada: VERANO
+        '404':
+          description: Error, alimento no encontrado
+    delete:
+      tags:
+        - alimentos
+      summary: Delete alimento
+      description: Elimina un alimento dado un ID, si este alimento no pertenece a níngún plato
+      operationId: removeAlimento
+      parameters:
+        - name: idAlimento
+          in: path
+          description: ID del alimento
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Alimento eliminado correctamente
+        '400':
+          description: Error al eliminar el alimento, pertenece a algún plato
+        '404':
+          description: Error al eliminar el alimento, no existe el alimento
+  '/alimentos/alergenos':
+    get:
+      tags:
+        - alimentos
+      summary: Obtener un listado de los alergenos de nuestro sistema
+      description: Alergenos que considera el sistema
+      operationId: getAlergenos
+      responses:
+        '200':
+          description: Se ha obtenido el listado satisfactoriamente
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  type: string
+                example: ["CEREALES","CRUSTACEOS","HUEVOS","PESCADO","CACAHUETES","SOJA","LECHE","APIO","MOSTAZA","SESAMO","ALTRAMUCES","MOLUSCOS"]
+  '/alimentos/tipos':
+    get:
+      tags:
+        - alimentos
+      summary: Obtener los tipos de alimentos
+      description: Obtener los tipos de alimentos
+      operationId: getTipos
+      responses:
+        '200':
+          description: Se ha obtenido el listado satisfactoriamente
+          content:
+            application/json:
+              example:
+                - GLUCIDOS
+                - LIPIDOS
+                - PROTEINAS
+                - SALESMINERALES
+  '/platos':
+    get:
+      tags:
+        - platos
+      summary: Get platos
+      description: Obtenemos un listado de los platos del sistema
+      operationId: getPlatos
+      parameters:
+        - name: s
+          in: query
+          description: Al introducir una cadena, buscará si el nombre del plato contiene ese caracter. Añadiendo \"-\" buscará al final del nombre, y \"X\" buscará al principio del nombre, si coincide.
+          schema:
+            type: string
+            example: -vos
+        - name: sortBy
+          in: query
+          description: Ordena los platos, en base al \"nombre\" y/o las \"calorias\". De forma ascendente \"-\", o de forma descendente \"X\". 
+          schema:
+            type: string
+          examples: 
+            ambos: 
+              value: -nombre,Xcalorias
+            uno: 
+              value: -calorias
+        - name: temporada
+          in: query
+          description: Devuelve los platos de la temporada especificada.
+          required: false
+          schema:
+            type: string
+            example: VERANO
+        - name: ca
+          in: query
+          description: Devuelve los platos pertenecientes a la comunidad autónoma especificada.
+          required: false
+          schema:
+            type: string
+            example: ANDALUCIA
+        - name: tipoDieta
+          in: query
+          description: Devuelve los platos del tipo de dieta especificado.
+          required: false
+          schema:
+            type: string
+            example: VEGANA
+      responses:
+        '200':
+          description: Se ha obtenido el listado satisfactoriamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plato'
+              example:
+                - id: 5pl
+                  nombre: Chorizo Picante
+                  alimentos:
+                    - alimento:
+                        id: 1al
+                        nombre: Chorizo
+                        calorias: 2000.03
+                        categoria: CARNE
+                        tipo: PROTEINAS
+                        alergeno: SOJA
+                        temporada: OTOÑO
+                      cantidad: 500
+                  listaAlergenos:
+                    - SOJA
+                  calorias: 2000.03
+                  provinciaOrigen: Zamora
+                  temporada: DICIEMBRE
+                  caorigen: Leon
+                
+        '400':
+          description: Error con los argumentos.
+    post:
+      tags:
+        - platos
+      summary: Add plato
+      description: Creamos y añadimos un plato al sistema
+      operationId: createPlato
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Plato'
+        required: true
+        description: El plato a añadir
+      responses:
+        '201':
+          description: Se creó el plato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plato'
+        '400':
+          description: Error al añadir el plato
+    put:
+      tags:
+        - platos
+      summary: Update plato
+      description: >-
+        Podemos modificar la cantidad de ingredientes de un plato, introduciendo que ingredientes queremos modificar, con su nueva cantidad. Si no ponemos alguno ya existente, se eliminará
+      operationId: putPlatos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Plato'
+            example:
+              id: 4pl
+              alimentos:
+                - alimento:
+                    id: 0al
+                  cantidad: 500
+                - alimento:
+                    id: 3al
+                  cantidad: 50
+      responses:
+        '204':
+          description: Se ha modificado el plato corectamente
+        '400':
+          description: Error al modificar el plato
+  '/platos/{platoId}':
+    get:
+      tags: 
+         - platos
+      summary: Get plato
+      description: Obtener un plato
+      operationId: getPlato
+      parameters: 
+        - name: platoId
+          in: path
+          description: Id del plato
+          required: true
+          schema:
+           type: string
+      responses:
+        '200':
+          description: Plato con el Id solicitado
+          content:
+            application/json:
+             schema:
+               $ref: '#/components/schemas/Plato'
+             example: 
+              nombre: Croquetas de jamón
+              alimentos:
+                - alimento:
+                    id: 1al
+                    nombre: Chorizo
+                    calorias: 2000.03
+                    categoria: CARNE
+                    tipo: PROTEINAS
+                    alergeno: SOJA
+                    temporada: OTOÑO
+                  cantidad: 500
+              provinciaOrigen: Zamora
+              caorigen: Leon
+        '404':
+          description: Plato no encontrado
+    delete:
+      tags:
+        - platos
+      summary: Delete plato
+      description: Elimina un plato existente
+      operationId: deletePlato
+      parameters:
+        - name: platoId
+          in: path
+          description: ID del plato
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Plato eliminado
+        '400':
+          description: Error, plato pertenece a una dieta
+        '404':
+          description: Error, no se ha encontrado el plato
+  '/platos/{platoId}/{alimentoId}':
+    post:
+      tags:
+        - platos
+      summary: Add ingrediente
+      description: Introducir un alimento en un plato
+      operationId: addAlimentoToPlato
+      parameters:
+        - name: platoId
+          in: path
+          description: Id del plato 
+          required: true
+          schema:
+            type: string
+        - name: alimentoId
+          in: path
+          description: Id del alimento
+          required: true
+          schema:
+            type: string
+        - name: cantidad
+          in: query
+          description: Cantidad del alimento en gramos. Debe de ser un número positivo mayor que cero
+          required: true
+          schema:
+            type: string
+            example: 6.9
+      responses:
+        '201':
+          description: Ingrediente añadido al plato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plato'
+              example:
+                id: 0pl
+                nombre: Plato1
+                alimentos:
+                  alimento:
+                     id: 0al
+                     nombre: Ejemplo
+                     calorias: 50.
+                     categoria: LACTEOS
+                     tipo: GLUCIDOS
+                     alergeno: CEREALES
+                     temporada: VERANO
+                  cantidad: 50.
+                alergenos: CEREALES
+                calorias: 2500
+                CAOrigen: Andalucia
+                Temporada: OTOÑO
+        '400':
+          description: Error al añadir el ingrediente
+        '404':
+          description: Alimento o plato no encontrado
+    delete:
+      tags:
+        - platos
+      summary: Delete ingrediente
+      description: Eliminar un alimento en un plato
+      operationId: deleteAlimentoToPlato
+      parameters:
+        - name: platoId
+          in: path
+          description: Id del plato 
+          required: true
+          schema:
+            type: string
+        - name: alimentoId
+          in: path
+          description: Id del alimento
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Ingrediente eliminado de plato
+        '404':
+          description: Alimento o Plato no encontrado
+  '/dietas':
+    get:
+      tags: 
+        - dietas
+      summary: Get dietas
+      description: Obtener las dietas
+      operationId: getDietas
+      parameters: 
+        - name: tipo
+          in: query
+          description: Devuelve las dietas del tipo especificado
+          required: false
+          schema:
+            type: string
+            example: LIPIDOS
+      responses:
+        '200':
+          description: Petición exitosa
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dieta'
+              example:
+                id: 0di
+                nombre: Dieta1
+                descripcion: Una descripcion
+                platos:
+                  id: 0pl
+                  nombre: Plato1
+                  alimentos:
+                    alimento:
+                      id: 0al
+                      nombre: Ejemplo
+                      calorias: 50.
+                      categoria: LACTEOS
+                      tipo: GLUCIDOS
+                      alergeno: CEREALES
+                      temporada: VERANO
+                    cantidad: 50.
+                  alergenos: CEREALES
+                  calorias: 2500
+                  CAOrigen: Andalucia
+                  Temporada: OTOÑO
+                tipo: VEGETARIANA
+        '400':
+          description: Error con los argumentos
+    post:
+      tags:
+        - dietas
+      summary: Add dieta
+      description: Crea una dieta con sus correspondientes platos
+      operationId: createDieta
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Dieta'
+        required: true
+        description: La dieta a añadir
+      responses:
+        '201':
+          description: Se creó la dieta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dieta'
+        '400':
+          description: Error al añadir la dieta
+    put:
+      tags:
+      - "dietas"
+      summary: Update dieta
+      description: Modificamos que platos pertenezcan a una dieta
+      operationId: "updateDieta"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Dieta'
+            example:
+              id: 6di
+              descripcion: Ejemplo de modificación de dieta
+              platos:
+                - id: 4pl
+                - id: 5pl
+              
+      responses:
+        "204":
+          description: Dieta modificada correctamente
+        "400":
+          description: Error, dieta no encontrada
+
+  '/dietas/{dietaId}':
+    get:
+      tags:
+        - dietas
+      summary: Buscar una dieta por su ID
+      description: Devuelve una sola dieta y con la posibilidad de mostrar alguno de sus campos
+      operationId: getDietaById
+      parameters:
+        - name: dietaId
+          in: path
+          description: ID de la dieta
+          required: true
+          schema:
+            type: string
+        - name: fields
+          in: query
+          description: Campos a mostrar de la dieta, separados por coma
+          schema:
+            type: string
+          examples:
+            soloTipo: 
+              value: tipo
+            soloPlatos: 
+              value: platos 
+            ambos: 
+              value: tipo,platos
+      responses:
+        '200':
+          description: Se obtuvo la dieta correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dieta'
+              example:
+                platos:
+                  - id: 4pl
+                    nombre: Merluza con Huevos
+                    alimentos:
+                      - alimento:
+                          id: 0al
+                          nombre: Merluza
+                          calorias: 150.75
+                          categoria: PESCADO
+                          tipo: PROTEINAS
+                          alergeno: PESCADO
+                          temporada: VERANO
+                        cantidad: 500
+                      - alimento:
+                          id: 3al
+                          nombre: Huevo
+                          calorias: 150.69
+                          categoria: HUEVOS
+                          tipo: PROTEINAS
+                          alergeno: HUEVOS
+                          temporada: PRIMAVERA
+                        cantidad: 50
+                    listaAlergenos:
+                      - PESCADO
+                      - HUEVOS
+                    calorias: 301.44
+                    provinciaOrigen: Cadiz
+                    temporada: ABRIL
+                    caorigen: Andalucia
+                tipo: PESCETARIANA
+                
+        '400':
+          description: Error, ID invalido o parametros incorrectos
+    delete:
+      tags:
+        - dietas
+      summary: Delete dieta
+      description: Elimina una dieta existente
+      operationId: deleteDieta
+      parameters:
+        - name: dietaId
+          in: path
+          description: ID de la dieta
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Dieta eliminada
+        '404':
+          description: No se ha encontrado la dieta
+  '/dietas/{dietaId}/{platoId}':
+    post:
+      tags:
+        - dietas
+      summary: Add plato a dieta
+      description: Añade un plato existente a una dieta también existente
+      operationId: addPlatoDieta
+      parameters:
+        - name: dietaId
+          in: path
+          description: ID de la dieta
+          required: true
+          schema:
+            type: string
+        - name: platoId
+          in: path
+          description: ID del plato
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Se añadió el plato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dieta'
+        '400':
+          description: Error, datos incorrectos
+    delete:
+      tags:
+        - dietas
+      summary: Delete plato de dieta
+      description: Elimina un plato de una dieta existente
+      operationId: deletePlatoDieta
+      parameters:
+        - name: dietaId
+          in: path
+          description: ID de la dieta
+          required: true
+          schema:
+            type: string
+        - name: platoId
+          in: path
+          description: ID del plato
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Plato eliminado de la dieta
+        '404':
+          description: Error, no se ha encontrado el plato o la dieta
+components:
+  schemas:
+    Alimento:
+      type: object
+      required: 
+        - nombre
+      properties:
+        id:
+          type: string
+        nombre:
+          type: string
+        calorias:
+          type: number
+        categoria:
+          type: string                
+          enum:
+            - LACTEOS
+            - CARNE
+            - PESCADO
+            - HUEVOS
+            - LEGUMBRES
+            - VERDURAS
+            - HORTALIZAS
+            - FRUTAS
+            - CEREALES
+        tipo:
+          type: string
+          enum:
+            - GLUCIDOS
+            - LIPIDOS
+            - PROTEINAS
+            - SALESMINERALES
+        alergeno:
+          type: string
+          enum: 
+            - CEREALES
+            - CRUSTACEOS
+            - HUEVOS
+            - PESCADO
+            - CACAHUETES
+            - SOJA
+            - LECHE
+            - APIO
+            - MOSTAZA
+            - SESAMO
+            - ALTRAMUCES
+            - MOLUSCOS
+        temporada:
+          type: string
+          enum: 
+            - VERANO
+            - INVIERNO
+            - OTOÑO
+            - PRIMAVERA
+            - ENERO
+            - FEBRERO 
+            - MARZO
+            - ABRIL 
+            - MAYO 
+            - JUNIO
+            - JULIO
+            - AGOSTO 
+            - SEPTIEMBRE
+            - OCTUBBRE
+            - NOVIEMBRE
+            - DICIEMBRE
+      example:
+        id: 1al
+        nombre: Huevo
+        calorias: 1000
+        categoria: HUEVOS
+        tipo: PROTEINAS
+        alergeno: HUEVOS
+        temporada: VERANO
+    Plato:
+      type: object
+      required: 
+      - nombre
+      properties:
+       id:
+        type: string
+       nombre:
+        type: string
+       alimentos:
+        type: array
+        items:
+         $ref: '#/components/schemas/Ingrediente'
+       alergeno:
+        type: string
+        enum: 
+          - CEREALES
+          - CRUSTACEOS
+          - HUEVOS
+          - PESCADO
+          - CACAHUETES
+          - SOJA
+          - LECHE
+          - APIO
+          - MOSTAZA
+          - SESAMO
+          - ALTRAMUCES
+          - MOLUSCOS                           
+       calorias:
+          type: number
+       provinciaOrigen:
+          type: string
+       CAOrigen:
+          type: string
+       temporada:
+          type: string
+          enum: 
+           - VERANO
+           - INVIERNO
+           - OTOÑO
+           - PRIMAVERA
+           - ENERO
+           - FEBRERO 
+           - MARZO
+           - ABRIL 
+           - MAYO 
+           - JUNIO
+           - JULIO
+           - AGOSTO 
+           - SEPTIEMBRE
+           - OCTUBBRE
+           - NOVIEMBRE
+           - DICIEMBRE
+      example:
+        id: 1pl
+        nombre: Huevo Frito
+        listaAlergenos:
+          - huevos
+        alimentos: 
+          - alimento:
+              id: 1al
+              nombre: Huevo
+              calorias: 1000
+              categoria: HUEVOS
+              tipo: PROTEINAS
+              alergeno: HUEVOS
+              temporada: VERANO
+            cantidad: 1
+        calorias: 1000
+        provinciaOrigen: Ciudad Real
+        CAOrigen: Castilla la Mancha
+        temporada: INVIERNO
+    Ingrediente:
+      type: object
+      required:
+        - alimento
+        - cantidad
+      properties:
+        alimento:
+          $ref: '#/components/schemas/Alimento'
+        cantidad:
+          type: number
+      example:
+        alimento:
+          id: 1al
+          nombre: Huevo
+          calorias: 1000
+          categoria: HUEVOS
+          tipo: PROTEINAS
+          alergeno: HUEVOS
+          temporada: VERANO
+        cantidad: 1
+    Dieta:
+      type: object
+      required:
+        - nombre
+      properties:
+        id:
+          type: string
+        nombre:
+          type: string
+        descripcion:
+          type: string
+        platos:
+          type: array
+          items:
+            $ref: '#/components/schemas/Plato'
+        tipo:
+         type: string
+         enum:
+           - GLUCIDOS
+           - LIPIDOS
+           - PROTEINAS
+           - SALESMINERALES
+      example:
+        id: 1di
+        nombre: Dieta de huevo
+        descripcion: Una dieta con huevo
+        platos:
+          - id: 1pl
+            nombre: Huevo Frito
+            listaAlergenos:
+              - huevos
+            alimentos: 
+              - alimento:
+                id: 1al
+                nombre: Huevo
+                calorias: 1000
+                categoria: HUEVOS
+                tipo: PROTEINAS
+                alergeno: HUEVOS
+                temporada: VERANO
+            cantidad: 1
+        calorias: 1000
+        provinciaOrigen: Ciudad Real
+        CAOrigen: Castilla la Mancha
+        temporada: INVIERNO
+        tipo: SINGLUTEN
