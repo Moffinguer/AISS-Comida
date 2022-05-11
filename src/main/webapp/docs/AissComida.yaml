@@ -60,14 +60,14 @@ paths:
           required: false
           schema:
            type: string
-           example: VERANO
+           example: PRIMAVERA
         - name: tipo
           in: query
           description: Devuelve los alimentos del tipo especificado
           required: false
           schema:
            type: string
-           example: GLUCIDOS
+           example: LIPIDOS
         - name: categoria
           in: query
           description: Devuelve los alimentos de la categoria especificada
@@ -267,7 +267,7 @@ paths:
           required: false
           schema:
             type: string
-            example: VERANO
+            example: ABRIL
         - name: ca
           in: query
           description: Devuelve los platos pertenecientes a la comunidad autónoma especificada.
