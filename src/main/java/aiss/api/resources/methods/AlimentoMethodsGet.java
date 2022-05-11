@@ -14,16 +14,17 @@ import aiss.model.TipoAlimento;
 public class AlimentoMethodsGet {
 
 	public static Collection<Alimento> getAlimentoPorCaracter(String caracteres, Collection<Alimento> alimentos) {
+		String temp =caracteres.toUpperCase();
 		if (caracteres.charAt(0) == 'X') {
 			alimentos = alimentos.stream()
-					.filter(x -> x.getNombre().startsWith(caracteres.substring(1, caracteres.length())))
+					.filter(x -> x.getNombre().toUpperCase().startsWith(temp.substring(1, temp.length())))
 					.collect(Collectors.toList());
 		} else if (caracteres.charAt(0) == '-') {
 			alimentos = alimentos.stream()
-					.filter(x -> x.getNombre().endsWith(caracteres.substring(1, caracteres.length())))
+					.filter(x -> x.getNombre().toUpperCase().endsWith(temp.substring(1, temp.length())))
 					.collect(Collectors.toList());
 		} else {
-			alimentos = alimentos.stream().filter(x -> x.getNombre().contains(caracteres)).collect(Collectors.toList());
+			alimentos = alimentos.stream().filter(x -> x.getNombre().toUpperCase().contains(temp)).collect(Collectors.toList());
 		}
 
 		return alimentos;
