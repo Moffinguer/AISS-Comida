@@ -61,8 +61,10 @@ public class Plato {
 
 		public void setAlimentos(List<Ingrediente> alimentos) {
 			this.alimentos = alimentos;
-			setListaAlergenos();
-			setCalorias();
+			if(!this.alimentos.stream().anyMatch(x -> x.getAlimento().getCalorias() == null || x.getAlimento().getAlergeno() == null)) {
+				setListaAlergenos();
+				setCalorias();
+			}
 		}
 
 		public Set<Alergeno> getListaAlergenos() {
