@@ -35,12 +35,7 @@ public class PlatoMethodsPost {
 	}
 
 	private static boolean checkAlimento(Alimento alimentoPlato, Alimento alimentoRepo) {
-		return alimentoRepo == null || !alimentoRepo.getNombre().equals(alimentoPlato.getNombre())
-				|| !alimentoRepo.getCalorias().equals(alimentoPlato.getCalorias())
-				|| !alimentoRepo.getCategoria().equals(alimentoPlato.getCategoria())
-				|| !alimentoRepo.getTipo().equals(alimentoPlato.getTipo())
-				|| !alimentoRepo.getAlergeno().equals(alimentoPlato.getAlergeno())
-				|| !alimentoRepo.getTemporada().equals(alimentoPlato.getTemporada());
+		return alimentoRepo == null;
 	}
 
 	public static void checkCantidadIsValid(String cantidad) {

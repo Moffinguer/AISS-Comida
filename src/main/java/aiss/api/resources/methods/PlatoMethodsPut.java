@@ -50,11 +50,11 @@ public class PlatoMethodsPut {
 			if (ingredienteId == null) {
 				throw new BadRequestException("No ha introducido IDs para los ingredientes");
 			}
-			Alimento alimento = repository.getAlimento(ingrediente.getAlimento().getId());
-			Double cantidad = ingrediente.getCantidad();
+			Alimento alimento = repository.getAlimento(ingredienteId);
 			if (alimento == null) {
 				throw new BadRequestException("No existe un alimento con ID: " + ingredienteId);
 			}
+			Double cantidad = ingrediente.getCantidad();
 			if (cantidad == null) {
 				throw new BadRequestException("No ha indicado cuantas calorias tiene el ingrediente " + ingredienteId);
 			}
