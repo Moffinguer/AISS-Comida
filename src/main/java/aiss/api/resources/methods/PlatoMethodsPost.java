@@ -19,22 +19,27 @@ public class PlatoMethodsPost {
 		if (plato.getCAOrigen() == null || plato.getCAOrigen().isEmpty())
 			throw new BadRequestException("La comunidad autónoma de origen del plato no puede ser nula");
 
-		checkIngredientesAreValid(plato, repository);
+		List<Ingrediente> alimentos= checkIngredientesAreValid(plato, repository);
+		plato.setAlimentos(alimentos);
 	}
 
-	private static void checkIngredientesAreValid(Plato plato, DietaRepository repository) {
+	private static List<Ingrediente> checkIngredientesAreValid(Plato plato, DietaRepository repository) {
 		List<Ingrediente> alimentos = plato.getAlimentos();
 		for (int i = 0; i < alimentos.size(); i++) {
 			Alimento alimentoPlato = alimentos.get(i).getAlimento();
 			Alimento alimentoRepo = repository.getAlimento(alimentoPlato.getId());
-			if (checkAlimento(alimentoPlato, alimentoRepo)) {
+			Double cantidadAlimento= alimentos.get(i).getCantidad();
+			if (checkAlimento(alimentoRepo)) {
 				throw new BadRequestException("El alimento con ID: " + alimentoPlato.getId() + " no existe");
-
+			}else {
+				Ingrediente ingrediente= new Ingrediente(alimentoRepo, cantidadAlimento);
+				alimentos.set(i, ingrediente);
 			}
 		}
+		return alimentos;
 	}
 
-	private static boolean checkAlimento(Alimento alimentoPlato, Alimento alimentoRepo) {
+	private static boolean checkAlimento(Alimento alimentoRepo) {
 		return alimentoRepo == null;
 	}
 
