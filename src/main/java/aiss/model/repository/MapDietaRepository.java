@@ -106,7 +106,7 @@ public class MapDietaRepository implements DietaRepository{
 		alimento4 = new Alimento(
 				"Leche",
 				150.69,
-				Categoria.lACTEOS,
+				Categoria.LACTEOS,
 				TipoAlimento.LIPIDOS,
 				Alergeno.LECHE,
 				Temporada.PRIMAVERA

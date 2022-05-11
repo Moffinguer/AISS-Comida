@@ -1,7 +1,10 @@
 package aiss.model;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.jboss.resteasy.spi.BadRequestException;
 
+@JsonSerialize(include = Inclusion.NON_NULL)
 public class Ingrediente {
 	private Alimento alimento;
 	private Double cantidad;
