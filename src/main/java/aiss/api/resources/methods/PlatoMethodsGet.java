@@ -76,15 +76,15 @@ public class PlatoMethodsGet {
 		 * Devuelve los platos que empiezan(X), terminan(-) o contienen un caracter
 		 * especificado
 		 */
-
+		String temp = caracteres.toUpperCase();
 		if (caracteres.charAt(0) == 'X') {
-			platos = platos.stream().filter(x -> x.getNombre().startsWith(caracteres.substring(1, caracteres.length())))
+			platos = platos.stream().filter(x -> x.getNombre().toUpperCase().startsWith(temp.substring(1, temp.length())))
 					.collect(Collectors.toList());
 		} else if (caracteres.charAt(0) == '-') {
-			platos = platos.stream().filter(x -> x.getNombre().endsWith(caracteres.substring(1, caracteres.length())))
+			platos = platos.stream().filter(x -> x.getNombre().toUpperCase().endsWith(temp.substring(1, temp.length())))
 					.collect(Collectors.toList());
 		} else {
-			platos = platos.stream().filter(x -> x.getNombre().contains(caracteres.substring(1, caracteres.length())))
+			platos = platos.stream().filter(x -> x.getNombre().toUpperCase().contains(temp))
 					.collect(Collectors.toList());
 		}
 
