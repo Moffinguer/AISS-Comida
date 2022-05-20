@@ -7,6 +7,7 @@ package aiss.api;
 import aiss.api.resources.AlimentoResource;
 import aiss.api.resources.DietaResource;
 import aiss.api.resources.PlatoResource;
+import aiss.model.IngredienteExterno;
 	
 	public class FoodApplication  extends Application {
 		private Set<Object> singletons = new HashSet<Object>();
@@ -15,10 +16,11 @@ import aiss.api.resources.PlatoResource;
 		// Loads all resources that are implemented in the application
 		// so that they can be found by RESTEasy.
 		public FoodApplication() {
-
+			
 			singletons.add(AlimentoResource.getInstance());
 			singletons.add(DietaResource.getInstance());
 			singletons.add(PlatoResource.getInstance());
+			singletons.add(IngredienteResource.getInstance());
 		}
 
 		@Override
