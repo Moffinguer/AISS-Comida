@@ -24,6 +24,7 @@ public class RecetaResource {
 		RecetaExterna[] search = cr.get(RecetaExterna[].class);
 		return Arrays.asList(search);
 	}
+	
 	@PUT 
 	@Consumes("application/json")
 	public boolean updateReceta(RecetaExterna receta) {
@@ -41,8 +42,38 @@ public class RecetaResource {
 		
 		return success;
 	}
-	public Response deleteReceta() {
+
+
+
+	public RecetaExterna addReceta(RecetaExterna receta) {
+		ClientResource cr = null;
+		RecetaExterna resultReceta = null;
+		try {
+			cr = new ClientResource(FOOD_API_URI);
+			cr.setEntityBuffering(true);		// Needed for using RESTlet from JUnit tests
+			resultReceta = cr.post(receta,RecetaExterna.class);
+			
+		} catch (ResourceException re) {
+			System.err.println("Error cuando se suma la receta: " + cr.getResponse().getStatus());
+		}
 		
+		return resultReceta;
+	}
+	
+	public boolean deleteReceta(String recetaId) {
+		ClientResource cr = null;
+		boolean success = true;
+		try {
+			cr = new ClientResource(FOOD_API_URI + "/" + recetaId);
+			cr.setEntityBuffering(true);		// Needed for using RESTlet from JUnit tests
+			cr.delete();
+			
+		} catch (ResourceException re) {
+			System.err.println("Error cuando se borra la receta: " + cr.getResponse().getStatus());
+			success = false;
+		}
+		
+		return success;
 	}
 
 }
