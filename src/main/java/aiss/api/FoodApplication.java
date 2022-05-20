@@ -6,6 +6,7 @@ package aiss.api;
 
 import aiss.api.resources.AlimentoResource;
 import aiss.api.resources.DietaResource;
+import aiss.api.resources.IngredienteResource;
 import aiss.api.resources.PlatoResource;
 import aiss.model.IngredienteExterno;
 	
@@ -20,7 +21,6 @@ import aiss.model.IngredienteExterno;
 			singletons.add(AlimentoResource.getInstance());
 			singletons.add(DietaResource.getInstance());
 			singletons.add(PlatoResource.getInstance());
-			singletons.add(IngredienteResource.getInstance());
 		}
 
 		@Override

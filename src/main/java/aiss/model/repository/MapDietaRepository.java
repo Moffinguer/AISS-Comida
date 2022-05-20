@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import aiss.api.resources.IngredienteResource;
 import aiss.model.Alergeno;
 import aiss.model.Alimento;
 import aiss.model.Categoria;
@@ -112,6 +113,9 @@ public class MapDietaRepository implements DietaRepository{
 				Temporada.PRIMAVERA
 				);
 		instance.addAlimento(alimento4);
+		for(Alimento dumbAlimento : IngredienteResource.getIngredientesExternos()) {
+			instance.addAlimento(dumbAlimento);
+		}
 	}
 	
 
