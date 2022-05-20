@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 
@@ -53,5 +54,47 @@ public class TestRecetaExterna {
 			assertEquals("Error en el tiempo de la receta", "90", recetaPost.getTiempo());
 			
 		}
+	
+	@Test
+	public void testUpdateReceta() {
+		RecetaExterna receta = RecetaResource.getRecetas().stream().collect(Collectors.toList()).get(0);
+		receta.setNombre("new name");
+		receta.setTiempo("82");
+//		receta.setPrecio("100");
+//		receta.setCalorias("110");
+		receta.setPersonas("1");
+		receta.setCategoria("nice food");
+		receta.setDescripcion("this is a new description for the recipe");
+		
+		boolean success = RecetaResource.updateReceta(receta);
+		assertTrue("Error when updating the recipe", success);
+		
+		RecetaExterna updatedReceta = null;
+		for (RecetaExterna r : RecetaResource.getRecetas().stream().collect(Collectors.toList())) {
+			if(r.getId().equals(receta.getId())) {
+				assertEquals("The field name does not match", receta.getNombre(), r.getNombre());
+				assertEquals("The field time does not match", receta.getTiempo(), r.getTiempo());
+//				assertEquals("The field price does not match", receta.getPrecio(), r.getPrecio());
+//				assertEquals("The field calories does not match", receta.getCalorias(), r.getCalorias());
+				assertEquals("The field people does not match", receta.getPersonas(), r.getPersonas());
+				assertEquals("The field category does not match", receta.getCategoria(), r.getCategoria());
+				assertEquals("The field description does not match", receta.getDescripcion(), r.getDescripcion());
+				updatedReceta = r;
+				break;
+			}
+		}
+		
+		//Show Result
+		assertNotNull("The updated Recipe is null",updatedReceta);
+		System.out.println("\nPrinting the updated Recipe:");
+		System.out.println(updatedReceta.getNombre());
+		System.out.println(updatedReceta.getTiempo());
+//		System.out.println(updatedReceta.getPrecio());
+//		System.out.println(updatedReceta.getCalorias());
+		System.out.println(updatedReceta.getPersonas());
+		System.out.println(updatedReceta.getCategoria());
+		System.out.println(updatedReceta.getDescripcion());
+		
+	}
 		
 }

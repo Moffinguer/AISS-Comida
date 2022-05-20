@@ -5,9 +5,6 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.PUT;
-import javax.ws.rs.core.Response;
 
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
@@ -25,9 +22,8 @@ public class RecetaResource {
 		return Arrays.asList(search);
 	}
 	
-	@PUT 
-	@Consumes("application/json")
-	public boolean updateReceta(RecetaExterna receta) {
+
+	public static boolean updateReceta(RecetaExterna receta) {
 		ClientResource cr = null;
 		boolean success = true;
 		
@@ -42,7 +38,6 @@ public class RecetaResource {
 		
 		return success;
 	}
-
 
 
 	public RecetaExterna addReceta(RecetaExterna receta) {
