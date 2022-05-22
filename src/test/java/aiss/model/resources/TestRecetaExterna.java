@@ -1,13 +1,15 @@
 package aiss.model.resources;
 
 import static org.junit.Assert.assertEquals;
+
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
-
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,9 +20,10 @@ import aiss.api.resources.RecetaResource;
 import aiss.model.PerfilExterno;
 import aiss.model.RecetaExterna;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestRecetaExterna {
 	
-	public RecetaExterna recetaAux= new RecetaExterna(),
+	public static RecetaExterna recetaAux= new RecetaExterna(),
 		                 recetaPost= new RecetaExterna();
 	static RecetaResource resourceReceta=new RecetaResource();
 	static PerfilResource resourcePerfil = new PerfilResource();
@@ -40,7 +43,7 @@ public class TestRecetaExterna {
 	}
 	
 	@Test
-	public void testGetAll() {
+	public void test1GetAll() {
 		Collection<RecetaExterna> recetasExternas = RecetaResource.getRecetas();
 		assertNotNull("The collection of external Recipes is null", recetasExternas);
 		
@@ -50,9 +53,16 @@ public class TestRecetaExterna {
 			System.out.println(re.getNombre());
 		}
 	}
+	@Test
+	public void test4DeleteReceta() {
+		
+		boolean success= resourceReceta.deleteReceta(recetaPost.getId(), API_KEY);
+		
+		assertTrue("Error al borrar la receta", success);
+	}
 	
 	@Test
-	public void testAddReceta() {
+	public void test2AddReceta() {
 			recetaAux.setCalorias("203");
 			recetaAux.setDescripcion("pizza con queso");
 			recetaAux.setCategoria("italiana");
@@ -73,18 +83,9 @@ public class TestRecetaExterna {
 			assertEquals("Error en el tiempo de la receta", "90", recetaPost.getTiempo());
 			
 		}
-	
-	@Test(expected = AssertionError.class)
-	public void testDeleteReceta() {
-		
-		boolean success= resourceReceta.deleteReceta(recetaPost.getId(), API_KEY);
-		
-		assertTrue("Error al borrar la receta", success);
-	}
-	
 	@Test
-	public void testUpdateReceta() {
-		RecetaExterna receta = RecetaResource.getRecetas().stream().collect(Collectors.toList()).get(0);
+	public void test3UpdateReceta() {
+		RecetaExterna receta = recetaPost;
 		receta.setNombre("new name");
 		receta.setTiempo("82");
 //		receta.setPrecio("100");
