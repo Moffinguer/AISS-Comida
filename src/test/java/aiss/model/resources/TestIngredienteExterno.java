@@ -7,7 +7,9 @@ import java.util.Collection;
 import org.junit.Test;
 
 import aiss.api.resources.IngredienteResource;
+import aiss.model.Alimento;
 import aiss.model.IngredienteExterno;
+import aiss.model.repository.MapDietaRepository;
 
 public class TestIngredienteExterno {
 	@Test

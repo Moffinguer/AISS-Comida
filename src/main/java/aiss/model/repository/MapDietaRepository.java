@@ -116,6 +116,9 @@ public class MapDietaRepository implements DietaRepository{
 		for(Alimento dumbAlimento : IngredienteResource.getIngredientesExternos()) {
 			instance.addAlimento(dumbAlimento);
 		}
+		for(Alimento dumbAlimento : IngredienteResource.getIngredientesExternos()) {
+			instance.addAlimento(dumbAlimento);
+		}
 	}
 	
 

@@ -33,7 +33,7 @@ public class IngredienteResource {
 			rnd.ints(0, Alergeno.values().length);
 			Alimento tempAlimento = new Alimento();
 			tempAlimento.setNombre(ie.getNombre());
-			tempAlimento.setCalorias(Double.parseDouble(ie.getCalorias100gr()));
+			tempAlimento.setCalorias(ie.getCalorias100gr());
 			tempAlimento.setAlergeno(Alergeno.values()[rnd.ints(0, Alergeno.values().length).findFirst().getAsInt()]);
 			tempAlimento.setCategoria(Categoria.values()[rnd.ints(0, Categoria.values().length).findFirst().getAsInt()]);
 			tempAlimento.setTemporada(Temporada.values()[rnd.ints(0, Temporada.values().length).findFirst().getAsInt()]);

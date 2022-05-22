@@ -18,8 +18,7 @@ import aiss.api.resources.IngredienteResource;
 @JsonPropertyOrder({
 "id",
 "nombre",
-"calorias100gr",
-"peso",
+"calorias",
 "precio"
 })
 @Generated("jsonschema2pojo")
@@ -29,12 +28,10 @@ public class IngredienteExterno {
 private String id;
 @JsonProperty("nombre")
 private String nombre;
-@JsonProperty("calorias100gr")
-private String calorias100gr;
-@JsonProperty("peso")
-private String peso;
+@JsonProperty("calorias")
+private Double calorias100gr;
 @JsonProperty("precio")
-private String precio;
+private Double precio;
 @JsonIgnore
 private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
@@ -58,33 +55,22 @@ public void setNombre(String nombre) {
 this.nombre = nombre;
 }
 
-@JsonProperty("calorias100gr")
-public String getCalorias100gr() {
+@JsonProperty("calorias")
+public Double getCalorias100gr() {
 return calorias100gr;
 }
 
-@JsonProperty("calorias100gr")
-public void setCalorias100gr(String calorias100gr) {
+@JsonProperty("calorias")
+public void setCalorias100gr(Double calorias100gr) {
 this.calorias100gr = calorias100gr;
 }
-
-@JsonProperty("peso")
-public Object getPeso() {
-return peso;
-}
-
-@JsonProperty("peso")
-public void setPeso(String peso) {
-this.peso = peso;
-}
-
 @JsonProperty("precio")
-public String getPrecio() {
+public Double getPrecio() {
 return precio;
 }
 
 @JsonProperty("precio")
-public void setPrecio(String precio) {
+public void setPrecio(Double precio) {
 this.precio = precio;
 }
 
