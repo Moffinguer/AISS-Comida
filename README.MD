@@ -1,3 +1,5 @@
+Puede acceder al repositorio y su historia en: https://github.com/Moffinguer/AISS-Comida
+
 # REPARTO DOCUMENTACION
 
 - FERNANDO UNIFICARÁ TODAS LAS PARTES (EL DOMINGO 8 *DEBE* DE ESTAR TODO)
