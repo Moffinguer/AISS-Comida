@@ -2,6 +2,7 @@ package aiss.model.resources;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.restlet.resource.ResourceException;
 
 import aiss.api.resources.PerfilResource;
 import aiss.api.resources.RecetaResource;
@@ -49,30 +51,36 @@ public class TestRecetaExterna {
 		}
 	}
 	
-//	@Test
-//	public void testAddPlaylist() {
-//			recetaAux.setId("r3");
-//			recetaAux.setCalorias("203");
-//			recetaAux.setDescripcion("pizza con tomate");
-//			recetaAux.setCategoria("italiana");
-//			recetaAux.setPersonas("3");
-//			recetaAux.setPrecio("2");
-//			recetaAux.setTiempo("90");
-//			recetaAux.setNombre("pizza");
-//			
-//			recetaPost = resourceReceta.addReceta(recetaAux, API_KEY);
-//			
-//			assertNotNull("Error al sumar la receta", recetaPost);
-//			assertEquals("Error en el id de la receta", "r3", recetaPost.getId());
-//			assertEquals("Error en el nombre de la receta", "pizza", recetaPost.getNombre());
-//			assertEquals("Error en las calorías de la receta", "203", recetaPost.getCalorias());
-//			assertEquals("Error en la descripcion de la receta", "pizza con tomate", recetaPost.getDescripcion());
-//			assertEquals("Error en la categoría de la receta", "italiana", recetaPost.getCategoria());
-//			assertEquals("Error en las personas de la receta", "3", recetaPost.getPersonas());
-//			assertEquals("Error en el precio de la receta", "2", recetaPost.getPrecio());
-//			assertEquals("Error en el tiempo de la receta", "90", recetaPost.getTiempo());
-//			
-//		}
+	@Test
+	public void testAddReceta() {
+			recetaAux.setCalorias("203");
+			recetaAux.setDescripcion("pizza con queso");
+			recetaAux.setCategoria("italiana");
+			recetaAux.setPersonas("3");
+			recetaAux.setPrecio("2");
+			recetaAux.setTiempo("90");
+			recetaAux.setNombre("pizza");
+			
+			recetaPost = resourceReceta.addReceta(recetaAux, API_KEY);
+			
+			assertNotNull("Error al sumar la receta", recetaPost);
+			assertEquals("Error en el nombre de la receta", "pizza", recetaPost.getNombre());
+			assertEquals("Error en las calorías de la receta", "203.0", recetaPost.getCalorias());
+			assertEquals("Error en la descripcion de la receta", "pizza con queso", recetaPost.getDescripcion());
+			assertEquals("Error en la categoría de la receta", "italiana", recetaPost.getCategoria());
+			assertEquals("Error en las personas de la receta", "3", recetaPost.getPersonas());
+			assertEquals("Error en el precio de la receta", "2.0", recetaPost.getPrecio());
+			assertEquals("Error en el tiempo de la receta", "90", recetaPost.getTiempo());
+			
+		}
+	
+	@Test(expected = AssertionError.class)
+	public void testDeleteReceta() {
+		
+		boolean success= resourceReceta.deleteReceta(recetaPost.getId(), API_KEY);
+		
+		assertTrue("Error al borrar la receta", success);
+	}
 	
 	@Test
 	public void testUpdateReceta() {
