@@ -23,12 +23,12 @@ public class RecetaResource {
 	}
 	
 
-	public static boolean updateReceta(RecetaExterna receta) {
+	public static boolean updateReceta(RecetaExterna receta, String API_KEY) {
 		ClientResource cr = null;
 		boolean success = true;
 		
 		try {
-			cr = new ClientResource(FOOD_API_URI);
+			cr = new ClientResource(FOOD_API_URI + "?token=" + API_KEY);
 			cr.setEntityBuffering(true);		// Needed for using RESTlet from JUnit tests
 			cr.put(receta);			
 		} catch (ResourceException re) {
@@ -40,11 +40,11 @@ public class RecetaResource {
 	}
 
 
-	public RecetaExterna addReceta(RecetaExterna receta) {
+	public RecetaExterna addReceta(RecetaExterna receta, String API_KEY) {
 		ClientResource cr = null;
 		RecetaExterna resultReceta = null;
 		try {
-			cr = new ClientResource(FOOD_API_URI);
+			cr = new ClientResource(FOOD_API_URI + "?token=" + API_KEY);
 			cr.setEntityBuffering(true);		// Needed for using RESTlet from JUnit tests
 			resultReceta = cr.post(receta,RecetaExterna.class);
 			
@@ -55,11 +55,11 @@ public class RecetaResource {
 		return resultReceta;
 	}
 	
-	public boolean deleteReceta(String recetaId) {
+	public boolean deleteReceta(String recetaId, String API_KEY) {
 		ClientResource cr = null;
 		boolean success = true;
 		try {
-			cr = new ClientResource(FOOD_API_URI + "/" + recetaId);
+			cr = new ClientResource(FOOD_API_URI + "/" + recetaId + "?token=" + API_KEY);
 			cr.setEntityBuffering(true);		// Needed for using RESTlet from JUnit tests
 			cr.delete();
 			
